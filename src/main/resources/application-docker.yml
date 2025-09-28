@@ -1,0 +1,16 @@
+# Configuration for Docker
+oracle8i:
+  host: ${ORACLE_HOST:1.2.3.4}
+  port: ${ORACLE_PORT:1521}
+  sid: ${ORACLE_SID:orcl}
+  username: ${ORACLE_USERNAME:username}
+  password: ${ORACLE_PASSWORD:password}
+  driver: oracle.jdbc.driver.OracleDriver
+
+# Logging configuration for Docker
+logging:
+  level:
+    com.connectors.oracle8i: INFO
+    org.springframework.jdbc: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

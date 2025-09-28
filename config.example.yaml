@@ -1,0 +1,44 @@
+# Oracle 8i Connector - Configuration Example
+# Copy this file to config.yaml and update with your actual values
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: oracle8i-connector
+  
+  # Logging configuration
+  logging:
+    level:
+      com.connectors.oracle8i: DEBUG
+      org.springframework.jdbc: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Oracle 8i configuration
+oracle8i:
+  host: 1.2.3.4                    # Replace with your Oracle server IP
+  port: 1521                       # Replace with your Oracle port
+  sid: orcl                        # Replace with your Oracle SID
+  username: username               # Replace with your Oracle username
+  password: password               # Replace with your Oracle password
+  driver: oracle.jdbc.driver.OracleDriver
+
+# NLS configuration for Oracle 8i
+oracle:
+  jdbc:
+    timezoneAsRegion: false
+  net:
+    ns:
+      SQLnetDef:
+        TCP_CONNTIMEOUT: 10000
+        TCP_RECVTIMEOUT: 10000
+
+# Application configuration
+app:
+  name: Oracle 8i Connector
+  version: 1.0.0
+  description: Oracle 8i connector using classes12.jar

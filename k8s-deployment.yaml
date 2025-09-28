@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle8i-connector
+  labels:
+    app: oracle8i-connector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle8i-connector
+  template:
+    metadata:
+      labels:
+        app: oracle8i-connector
+    spec:
+      containers:
+      - name: oracle8i-connector
+        image: oracle8i-connector:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ORACLE_HOST
+          value: "your-oracle-host"
+        - name: ORACLE_PORT
+          value: "1521"
+        - name: ORACLE_SID
+          value: "your-sid"
+        - name: ORACLE_USERNAME
+          value: "your-username"
+        - name: ORACLE_PASSWORD
+          value: "your-password"
+        # Liveness Probe: Checks if the container is alive
+        # Should return 200 OK if the application is running
+        livenessProbe:
+          httpGet:
+            path: /api/v1/oci8j-connector/healthz
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        # Readiness Probe: Checks if the container is ready to serve traffic
+        # Should return 200 OK only when database is connected
+        readinessProbe:
+          httpGet:
+            path: /api/v1/oci8j-connector/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oracle8i-connector-service
+spec:
+  selector:
+    app: oracle8i-connector
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
