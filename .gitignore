@@ -1,0 +1,161 @@
+# Gitignore - Exclude everything except explicitly specified files
+# This is a "deny-all" approach for maximum security
+
+# Exclude everything by default
+*
+
+# But include these specific files and directories
+!.gitignore
+!.gitattributes
+
+# Include the project structure
+!src/
+!src/**
+!lib/
+!lib/**
+!pom.xml
+!README.md
+!Dockerfile
+!docker-compose.yml
+!k8s-deployment.yaml
+!config.example.yaml
+!generate-build-info.sh
+!test-api.sh
+!test-security.sh
+
+# Include Maven wrapper (if exists)
+!.mvn/
+!.mvn/**
+!mvnw
+!mvnw.cmd
+
+# Include documentation
+!docs/
+!docs/**
+
+# Include scripts
+!scripts/
+!scripts/**
+
+# Include configuration templates
+!*.example.*
+!*.template.*
+
+# Include Docker files
+!Dockerfile*
+!docker-compose*.yml
+!docker-compose*.yaml
+
+# Include Kubernetes manifests
+!*.yaml
+!*.yml
+!k8s-*
+!kubernetes-*
+
+# Include CI/CD files
+!.github/
+!.github/**
+!.gitlab-ci.yml
+!Jenkinsfile
+!azure-pipelines.yml
+
+# Explicitly exclude sensitive files
+config.yaml
+application.yml
+application.properties
+*.env
+.env
+.env.local
+.env.production
+.env.staging
+
+# Explicitly exclude build artifacts
+target/
+build/
+out/
+dist/
+*.jar
+*.war
+*.ear
+*.class
+
+# Explicitly exclude IDE files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# Explicitly exclude OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Explicitly exclude logs
+*.log
+logs/
+log/
+
+# Explicitly exclude temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Explicitly exclude dependency directories
+node_modules/
+.npm
+.yarn
+
+# Explicitly exclude Python files (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Explicitly exclude other common files
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.nyc_output
+coverage/
+.cache/
+.parcel-cache/
+
+# Explicitly exclude database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Explicitly exclude certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# Explicitly exclude secrets and credentials
+secrets/
+credentials/
+.secrets/
+.credentials/

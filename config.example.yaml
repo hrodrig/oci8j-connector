@@ -26,6 +26,10 @@ oracle8i:
   username: username               # Replace with your Oracle username
   password: password               # Replace with your Oracle password
   driver: oracle.jdbc.driver.OracleDriver
+  # Connection timeouts (in milliseconds)
+  connection_timeout: 30000        # Connection timeout (30 seconds)
+  socket_timeout: 60000            # Socket timeout (60 seconds)
+  query_timeout: 120000            # Query execution timeout (120 seconds)
 
 # NLS configuration for Oracle 8i
 oracle:
@@ -42,3 +46,10 @@ app:
   name: Oracle 8i Connector
   version: 1.0.0
   description: Oracle 8i connector using classes12.jar
+
+# Basic Authentication (optional)
+# Only enabled if both username and password are provided
+basic_auth:
+  enabled: false                       # Set to true to enable Basic Auth
+  username: admin                      # Replace with your desired username
+  password: secretpassword             # Replace with your desired password

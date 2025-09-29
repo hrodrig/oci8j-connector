@@ -5,12 +5,20 @@ services:
     build: .
     ports:
       - "8080:8080"
-    environment:
-      - ORACLE_HOST=1.2.3.4
-      - ORACLE_PORT=1521
-      - ORACLE_SID=orcl
-      - ORACLE_USERNAME=username
-      - ORACLE_PASSWORD=password
+            environment:
+              - ORACLE_HOST=1.2.3.4
+              - ORACLE_PORT=1521
+              - ORACLE_SID=orcl
+              - ORACLE_USERNAME=username
+              - ORACLE_PASSWORD=password
+              # Timeout configurations (in milliseconds)
+              - ORACLE_CONNECTION_TIMEOUT=30000
+              - ORACLE_SOCKET_TIMEOUT=60000
+              - ORACLE_QUERY_TIMEOUT=120000
+              # Basic Authentication (optional)
+              - BASIC_AUTH_ENABLED=false
+              - BASIC_AUTH_USERNAME=admin
+              - BASIC_AUTH_PASSWORD=secretpassword
     volumes:
       - ./lib:/app/lib
     restart: unless-stopped

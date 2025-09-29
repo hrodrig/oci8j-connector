@@ -4,10 +4,13 @@ import com.connectors.oracle8i.model.QueryRequest;
 import com.connectors.oracle8i.model.QueryResponse;
 import com.connectors.oracle8i.service.Oracle8iService;
 import com.connectors.oracle8i.service.BuildInfoService;
+import com.connectors.oracle8i.config.BasicAuthConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +22,17 @@ import java.util.Map;
 @RequestMapping("/api/v1/oci8j-connector")
 @CrossOrigin(origins = "*")
 public class Oracle8iController {
+
+    private static final Logger logger = LoggerFactory.getLogger(Oracle8iController.class);
     
     @Autowired
     private Oracle8iService oracle8iService;
 
     @Autowired
     private BuildInfoService buildInfoService;
+
+    @Autowired
+    private BasicAuthConfig basicAuthConfig;
     
     /**
      * Main endpoint for executing SQL queries
@@ -32,25 +40,24 @@ public class Oracle8iController {
      */
     @PostMapping("/query")
     public ResponseEntity<QueryResponse> executeQuery(@RequestBody QueryRequest request) {
-        System.out.println("📝 Received query: " + request);
-        
+        logger.info("📝 Received query: {}", request);
+
         try {
             QueryResponse response = oracle8iService.executeQuery(request);
-            
+
             if (response.isSuccess()) {
-                System.out.println("✅ Query executed successfully. Rows: " + response.getRowCount());
+                logger.info("✅ Query executed successfully. Rows: {}", response.getRowCount());
                 return ResponseEntity.ok(response);
             } else {
-                System.out.println("❌ Query error: " + response.getMessage());
+                logger.warn("❌ Query error: {}", response.getMessage());
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
         } catch (Exception e) {
-            System.err.println("💥 Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            
+            logger.error("💥 Unexpected error: {}", e.getMessage(), e);
+
             QueryResponse errorResponse = new QueryResponse(
-                false, 
+                false,
                 "Internal server error: " + e.getMessage()
             );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
@@ -130,6 +137,13 @@ public class Oracle8iController {
         gitInfo.put("branch", buildInfoService.getGitBranch());
         gitInfo.put("commitTime", buildInfoService.getGitCommitTime());
         info.put("git", gitInfo);
+        
+        // Basic Auth information
+        Map<String, Object> authInfo = new HashMap<>();
+        authInfo.put("enabled", basicAuthConfig.isEnabled());
+        authInfo.put("status", basicAuthConfig.getStatus());
+        info.put("authentication", authInfo);
+        
         info.put("endpoints", endpoints);
 
         return ResponseEntity.ok(info);

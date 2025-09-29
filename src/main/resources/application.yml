@@ -3,3 +3,10 @@ spring:
     active: default
   config:
     import: classpath:config.yaml
+
+# Basic Authentication (optional)
+# Only enabled if both username and password are provided
+basic_auth:
+  enabled: false
+  username: ${BASIC_AUTH_USERNAME:}
+  password: ${BASIC_AUTH_PASSWORD:}
