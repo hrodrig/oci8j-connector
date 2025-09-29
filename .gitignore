@@ -15,6 +15,8 @@
 !lib/**
 !pom.xml
 !README.md
+!LICENSE
+!CONTRIBUTING.md
 !Dockerfile
 !docker-compose.example.yml
 !k8s-deployment.yaml
