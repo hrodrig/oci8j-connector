@@ -1,0 +1,39 @@
+# Git attributes for Oracle 8i Connector
+
+# Ensure .DS_Store files are ignored everywhere
+.DS_Store export-ignore
+**/.DS_Store export-ignore
+
+# Ensure build artifacts are ignored
+target/ export-ignore
+build/ export-ignore
+*.class export-ignore
+*.jar export-ignore
+
+# Ensure IDE files are ignored
+.vscode/ export-ignore
+.idea/ export-ignore
+*.iml export-ignore
+
+# Ensure sensitive files are ignored
+config.yaml export-ignore
+*.env export-ignore
+.env export-ignore
+
+# Text files should use LF line endings
+*.java text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.xml text eol=lf
+*.properties text eol=lf
+
+# Binary files
+*.jar binary
+*.class binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
