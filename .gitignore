@@ -22,6 +22,8 @@
 !generate-build-info.sh
 !test-api.sh
 !test-security.sh
+!cleanup-dsstore.sh
+!.dockerignore
 
 # Include Maven wrapper (if exists)
 !.mvn/
