@@ -15,9 +15,16 @@ Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver
 
 ## Configuration
 
+### Security Note
+
+**Important**: This project uses a secure configuration approach:
+- **Sensitive files** (like `docker-compose.yml` with real credentials) are excluded from Git
+- **Example files** (like `docker-compose.example.yml`) are included for reference
+- **Configuration files** use environment variables for sensitive data
+
 ### config.yaml file
 
-Copy `config.example.yaml` to `config.yaml` and update with your actual Oracle connection details:
+The application uses `src/main/resources/config.yaml` which is safe to commit because it uses environment variables for sensitive data. For reference, you can also check `config.example.yaml`:
 
 ```yaml
 oracle8i:
@@ -228,6 +235,66 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 curl http://localhost:8080/api/v1/oci8j-connector/healthz
 ```
 
+## Docker
+
+### Docker Compose Setup
+
+**Security Note**: The `docker-compose.yml` file with real credentials is excluded from Git for security reasons.
+
+#### Quick Start
+
+1. **Copy the example file:**
+   ```bash
+   cp docker-compose.example.yml docker-compose.yml
+   ```
+
+2. **Edit with your credentials:**
+   ```bash
+   # Edit docker-compose.yml with your actual Oracle connection details
+   nano docker-compose.yml
+   ```
+
+3. **Start the service:**
+   ```bash
+   docker-compose up -d
+   ```
+
+#### Environment Variables
+
+The Docker Compose file supports the following environment variables:
+
+```yaml
+environment:
+  # Oracle Database Configuration
+  - ORACLE_HOST=your-oracle-host
+  - ORACLE_PORT=1521
+  - ORACLE_SID=your-sid
+  - ORACLE_USERNAME=your-username
+  - ORACLE_PASSWORD=your-password
+  
+  # Timeout configurations (in milliseconds)
+  - ORACLE_CONNECTION_TIMEOUT=30000
+  - ORACLE_SOCKET_TIMEOUT=60000
+  - ORACLE_QUERY_TIMEOUT=120000
+  
+  # Basic Authentication (optional)
+  - BASIC_AUTH_ENABLED=false
+  - BASIC_AUTH_USERNAME=admin
+  - BASIC_AUTH_PASSWORD=your-secret-password
+```
+
+#### Health Check
+
+The container includes a health check that verifies the API is responding:
+
+```bash
+# Check container health
+docker-compose ps
+
+# View logs
+docker-compose logs -f oracle8i-connector
+```
+
 ## Security
 
 ### Query Security Configuration
@@ -431,24 +498,37 @@ src/
 │   │   └── com/connectors/oracle8i/
 │   │       ├── Oracle8iConnectorApplication.java
 │   │       ├── config/
-│   │       │   └── Oracle8iConfig.java
+│   │       │   ├── Oracle8iConfig.java
+│   │       │   ├── SecurityConfig.java
+│   │       │   └── QuerySecurityConfig.java
 │   │       ├── controller/
 │   │       │   └── Oracle8iController.java
 │   │       ├── model/
 │   │       │   ├── QueryRequest.java
 │   │       │   └── QueryResponse.java
-│   │       └── service/
-│   │           └── Oracle8iService.java
+│   │       ├── service/
+│   │       │   ├── Oracle8iService.java
+│   │       │   └── BuildInfoService.java
+│   │       └── security/
+│   │           └── BasicAuthFilter.java
 │   └── resources/
 │       ├── application.yml
+│       ├── application-docker.yml
 │       └── config.yaml
 ├── lib/
 │   └── classes12.jar
 ├── config.example.yaml
-├── examples.sql
-├── start.sh
-├── test-api.sh
-├── docker-compose.yml
+├── docker-compose.example.yml
 ├── Dockerfile
+├── .dockerignore
+├── .gitignore
+├── .gitattributes
+├── k8s-deployment.yaml
+├── generate-build-info.sh
+├── test-api.sh
+├── test-security.sh
+├── cleanup-dsstore.sh
 └── pom.xml
 ```
+
+**Note**: Sensitive files like `docker-compose.yml` (with real credentials) are excluded from Git for security reasons.
