@@ -1,0 +1,152 @@
+# Dockerignore - Exclude files from Docker build context
+# This optimizes build performance and reduces image size
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+.gitmodules
+
+# Documentation
+README.md
+docs/
+*.md
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+target/
+build/
+out/
+dist/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven files
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+
+# Logs
+*.log
+logs/
+log/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Environment files
+.env
+.env.*
+*.env
+config.yaml
+application.yml
+application.properties
+
+# Test files
+test-*.sh
+cleanup-*.sh
+*.test
+test/
+tests/
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+azure-pipelines.yml
+
+# Docker files (except the one we're building)
+Dockerfile*
+docker-compose*.yml
+docker-compose*.yaml
+.dockerignore
+
+# Kubernetes files
+k8s-*
+kubernetes-*
+*.yaml
+*.yml
+
+# Scripts
+scripts/
+*.sh
+
+# Node.js (if any)
+node_modules/
+.npm
+.yarn
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Other common files
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.nyc_output
+coverage/
+.cache/
+.parcel-cache/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# Secrets and credentials
+secrets/
+credentials/
+.secrets/
+.credentials/
+
+# Keep only essential files for Docker build:
+# - src/ (source code)
+# - lib/ (Oracle JDBC driver)
+# - Dockerfile (the one being built)
