@@ -16,7 +16,7 @@
 !pom.xml
 !README.md
 !Dockerfile
-!docker-compose.yml
+!docker-compose.example.yml
 !k8s-deployment.yaml
 !config.example.yaml
 !generate-build-info.sh
@@ -65,6 +65,7 @@
 config.yaml
 application.yml
 application.properties
+docker-compose.yml
 *.env
 .env
 .env.local

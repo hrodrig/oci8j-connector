@@ -1,0 +1,31 @@
+services:
+  oracle8i-connector:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Oracle Database Configuration
+      - ORACLE_HOST=your-oracle-host
+      - ORACLE_PORT=1521
+      - ORACLE_SID=your-sid
+      - ORACLE_USERNAME=your-username
+      - ORACLE_PASSWORD=your-password
+      
+      # Timeout configurations (in milliseconds)
+      - ORACLE_CONNECTION_TIMEOUT=30000
+      - ORACLE_SOCKET_TIMEOUT=60000
+      - ORACLE_QUERY_TIMEOUT=120000
+      
+      # Basic Authentication (optional)
+      - BASIC_AUTH_ENABLED=false
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=your-secret-password
+    volumes:
+      - ./lib:/app/lib
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/oci8j-connector/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
