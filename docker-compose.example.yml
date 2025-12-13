@@ -11,9 +11,7 @@ services:
       - ORACLE_USERNAME=your-username
       - ORACLE_PASSWORD=your-password
       
-      # Timeout configurations (in milliseconds)
-      - ORACLE_CONNECTION_TIMEOUT=30000
-      - ORACLE_SOCKET_TIMEOUT=60000
+      # Query timeout (in milliseconds)
       - ORACLE_QUERY_TIMEOUT=120000
       
       # Basic Authentication (optional)

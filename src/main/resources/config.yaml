@@ -23,10 +23,8 @@ oracle8i:
   username: ${ORACLE_USERNAME:username}
   password: ${ORACLE_PASSWORD:password}
   driver: oracle.jdbc.driver.OracleDriver
-  # Connection timeouts (in milliseconds)
-  connection_timeout: ${ORACLE_CONNECTION_TIMEOUT:30000}  # 30 seconds
-  socket_timeout: ${ORACLE_SOCKET_TIMEOUT:60000}          # 60 seconds
-  query_timeout: ${ORACLE_QUERY_TIMEOUT:120000}           # 120 seconds
+  # Query timeout (in milliseconds)
+  query_timeout: ${ORACLE_QUERY_TIMEOUT:120000}  # 120 seconds
 
 # NLS configuration for Oracle 8i
 oracle:

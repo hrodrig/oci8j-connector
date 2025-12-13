@@ -7,7 +7,7 @@
 
     <groupId>com.connectors</groupId>
     <artifactId>oracle8i-connector</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.8</version>
     <packaging>jar</packaging>
 
     <name>Oracle 8i Connector</name>

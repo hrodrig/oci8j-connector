@@ -83,6 +83,7 @@ dist/
 *.war
 *.ear
 *.class
+build-info.properties
 
 # Explicitly exclude IDE files
 .vscode/

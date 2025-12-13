@@ -5,7 +5,7 @@ FROM eclipse-temurin:8-jdk AS builder
 # Maintainer information
 LABEL maintainer="Oracle 8i Connector Team"
 LABEL description="Oracle 8i Connector with classes12.jar"
-LABEL version="1.2.0"
+LABEL version="1.2.8"
 
 # Create working directory
 WORKDIR /app
@@ -45,7 +45,7 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 WORKDIR /app
 
 # Copy JAR from builder stage
-COPY --from=builder /app/target/oracle8i-connector-1.2.0.jar app.jar
+COPY --from=builder /app/target/oracle8i-connector-1.2.8.jar app.jar
 
 # Copy Oracle driver
 COPY --from=builder /app/lib/classes12.jar lib/

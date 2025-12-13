@@ -1,4 +1,11 @@
-# Oracle 8i Connector
+# Oracle 8i Connector v1.2.8
+
+![Version](https://img.shields.io/badge/version-1.2.8-blue.svg)
+![Java](https://img.shields.io/badge/Java-8-orange.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Maven](https://img.shields.io/badge/Maven-3.9+-red.svg)
+![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)
 
 Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API.
 
@@ -34,9 +41,7 @@ oracle8i:
   username: username               # Replace with your Oracle username
   password: password               # Replace with your Oracle password
   driver: oracle.jdbc.driver.OracleDriver
-  # Timeout configurations (in milliseconds)
-  connection_timeout: 30000        # Connection timeout (30 seconds)
-  socket_timeout: 60000            # Socket timeout (60 seconds)
+  # Query timeout (in milliseconds)
   query_timeout: 120000            # Query execution timeout (120 seconds)
 ```
 
@@ -50,8 +55,6 @@ export ORACLE_PORT=1521
 export ORACLE_SID=orcl
 export ORACLE_USERNAME=username
 export ORACLE_PASSWORD=password
-export ORACLE_CONNECTION_TIMEOUT=30000
-export ORACLE_SOCKET_TIMEOUT=60000
 export ORACLE_QUERY_TIMEOUT=120000
 ```
 
@@ -76,7 +79,120 @@ export BASIC_AUTH_PASSWORD=secretpassword
 
 **Note:** If Basic Auth is enabled, all API endpoints will require authentication. The `/healthz` endpoint remains accessible without authentication for monitoring purposes.
 
-## Compilation and Execution
+## Quick Start with Makefile
+
+The easiest way to build and run the application is using the included `Makefile`:
+
+```bash
+# Show all available commands
+make help
+
+# Build the Docker image
+make build
+
+# Start the service
+make up
+
+# Check health status
+make health
+
+# Execute a test query
+make query QUERY="SELECT 1 FROM DUAL"
+```
+
+## Using Makefile
+
+The project includes a comprehensive `Makefile` with convenient commands for building and managing the application.
+
+### Available Commands
+
+#### Build Commands
+
+```bash
+# Show help and current version
+make help
+
+# Build Docker image (uses host platform - recommended for local development)
+# This will build for your current architecture (ARM64 on Apple Silicon, AMD64 on Intel)
+make build
+
+# Build for specific platforms (useful for cross-platform builds)
+make build-arm64    # Build for linux/arm64 (Apple Silicon, ARM servers)
+make build-amd64    # Build for linux/amd64 (Intel/AMD x86_64 servers)
+
+# Generate build-info.properties manually (usually done automatically by Maven)
+make generate-build-info
+```
+
+**When to use each build command:**
+- `make build`: Use this for local development. It builds for your current platform.
+- `make build-amd64`: Use this when you need to build for AMD64/x86_64 servers (most common for production).
+- `make build-arm64`: Use this when you need to build for ARM64 servers (Apple Silicon, AWS Graviton, etc.).
+
+All build commands use `--no-cache` to ensure a fresh build and tag images with both version and `latest`.
+
+#### Service Management Commands
+
+```bash
+# Start the service
+make up
+
+# Stop the service
+make down
+
+# View service logs (follow mode)
+make logs
+
+# Check health status
+make health
+```
+
+#### Query Execution
+
+```bash
+# Execute a test query
+make query QUERY="SELECT 1 FROM DUAL"
+
+# Execute a more complex query
+make query QUERY="SELECT * FROM users WHERE id = 1"
+```
+
+### Version Management
+
+The Makefile automatically reads the version from `pom.xml`. You can override it:
+
+```bash
+make build VERSION=1.2.8
+```
+
+Images are tagged with both the version and `latest`:
+- `oci8j-connector:1.2.8` and `oci8j-connector:latest`
+- `oci8j-connector:1.2.8-arm64` and `oci8j-connector:latest-arm64`
+- `oci8j-connector:1.2.8-amd64` and `oci8j-connector:latest-amd64`
+
+### Example Workflow
+
+```bash
+# 1. Build the image
+make build
+
+# 2. Start the service
+make up
+
+# 3. Check if it's running
+make health
+
+# 4. Execute a query
+make query QUERY="SELECT 1 FROM DUAL"
+
+# 5. View logs if needed
+make logs
+
+# 6. Stop when done
+make down
+```
+
+## Compilation and Execution (Maven)
 
 ### Compile
 
@@ -94,7 +210,7 @@ mvn spring-boot:run
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.0.0.jar
+java -jar target/oracle8i-connector-1.2.8.jar
 ```
 
 ## API Endpoints
@@ -241,7 +357,26 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
 
 **Security Note**: The `docker-compose.yml` file with real credentials is excluded from Git for security reasons.
 
-#### Quick Start
+#### Quick Start (Using Makefile)
+
+1. **Copy the example file:**
+   ```bash
+   cp docker-compose.example.yml docker-compose.yml
+   ```
+
+2. **Edit with your credentials:**
+   ```bash
+   # Edit docker-compose.yml with your actual Oracle connection details
+   nano docker-compose.yml
+   ```
+
+3. **Build and start the service:**
+   ```bash
+   make build    # Build the Docker image
+   make up        # Start the service
+   ```
+
+#### Quick Start (Using Docker Compose directly)
 
 1. **Copy the example file:**
    ```bash
@@ -256,7 +391,7 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
 
 3. **Start the service:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 #### Environment Variables
@@ -272,9 +407,7 @@ environment:
   - ORACLE_USERNAME=your-username
   - ORACLE_PASSWORD=your-password
   
-  # Timeout configurations (in milliseconds)
-  - ORACLE_CONNECTION_TIMEOUT=30000
-  - ORACLE_SOCKET_TIMEOUT=60000
+  # Query timeout (in milliseconds)
   - ORACLE_QUERY_TIMEOUT=120000
   
   # Basic Authentication (optional)
@@ -288,12 +421,19 @@ environment:
 The container includes a health check that verifies the API is responding:
 
 ```bash
-# Check container health
-docker-compose ps
+# Using Makefile
+make health        # Check health status
+make logs          # View logs
 
-# View logs
-docker-compose logs -f oracle8i-connector
+# Using Docker Compose directly
+docker compose ps
+docker compose logs -f oracle8i-connector
 ```
+
+### Important Notes
+
+- **Oracle 8i Compatibility**: The connection URL uses the simple format `jdbc:oracle:thin:@host:port:sid` without timeout parameters, as Oracle 8i's `classes12.jar` driver doesn't support them in the URL.
+- **Query Timeout**: Only `query_timeout` is configurable and is applied at the JDBC template level, not in the connection URL.
 
 ## Security
 
@@ -532,3 +672,27 @@ src/
 ```
 
 **Note**: Sensitive files like `docker-compose.yml` (with real credentials) are excluded from Git for security reasons.
+
+## Disclaimer
+
+**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.**
+
+This software is provided for use at your own risk. The authors and contributors shall not be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+**By using this software, you acknowledge that you have read this disclaimer, understand it, and agree to be bound by its terms. You assume full responsibility for any consequences that may result from the use of this software, including but not limited to:**
+- Data loss or corruption
+- Security breaches
+- Infrastructure failures
+- Service interruptions
+- Any other damages or losses
+
+It is your responsibility to:
+- Test the software thoroughly in a non-production environment
+- Review and understand the code before deployment
+- Implement appropriate security measures
+- Maintain backups of your data
+- Monitor the software in production
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
