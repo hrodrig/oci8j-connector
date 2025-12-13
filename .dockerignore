@@ -46,7 +46,7 @@ dist/
 .mvn/
 mvnw
 mvnw.cmd
-pom.xml
+# pom.xml is needed for Docker build - do not exclude
 
 # Logs
 *.log
