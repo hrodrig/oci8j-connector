@@ -85,7 +85,6 @@ public class Oracle8iConfig {
         String sid = getSid();
         String username = getUsername();
         String password = getPassword();
-        int queryTimeout = getQueryTimeout();
 
         // Build connection URL for Oracle 8i
         // Oracle 8i (classes12.jar) only supports "host:port:sid" format
@@ -98,6 +97,7 @@ public class Oracle8iConfig {
         dataSource.setPassword(password);
 
         // Configuration log (without password)
+        // Note: Query timeout is configured in JdbcTemplate, not in DataSource
         System.out.println("🔗 Configuring Oracle 8i connection:");
         System.out.println("   Host: " + host);
         System.out.println("   Port: " + port);
@@ -105,7 +105,7 @@ public class Oracle8iConfig {
         System.out.println("   User: " + username);
         System.out.println("   URL: " + url);
         System.out.println("   Driver: " + driver);
-        System.out.println("   Query Timeout: " + queryTimeout + "ms");
+        System.out.println("   Query Timeout: " + getQueryTimeout() + "ms (configured in JdbcTemplate)");
 
         return dataSource;
     }
