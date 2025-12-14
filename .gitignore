@@ -25,6 +25,7 @@
 !test-api.sh
 !test-security.sh
 !cleanup-dsstore.sh
+!Makefile
 !.dockerignore
 
 # Include Maven wrapper (if exists)
@@ -80,6 +81,8 @@ build/
 out/
 dist/
 *.jar
+# Exception: Allow classes12.jar (Oracle 8i driver required for build)
+!lib/classes12.jar
 *.war
 *.ear
 *.class
