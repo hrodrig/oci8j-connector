@@ -30,7 +30,6 @@ config.yaml export-ignore
 *.bat text eol=crlf
 *.xml text eol=lf
 *.properties text eol=lf
-oci8jctl text eol=lf
 
 # Binary files
 *.jar binary

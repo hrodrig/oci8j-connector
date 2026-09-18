@@ -32,8 +32,7 @@
 !examples.sql
 !scripts/
 !scripts/**
-!oci8jctl
-!oci8jctl.cmd
+!Makefile
 !.dockerignore
 
 # Include Maven wrapper (if exists)

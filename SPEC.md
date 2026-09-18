@@ -18,7 +18,8 @@ This document describes **current** behavior. Client-breaking changes must bump 
 | Config | YAML (`config.yaml` / packaged resources) overridden by env vars |
 | Auth | Optional HTTP Basic Auth (`BASIC_AUTH_*` / `basic_auth.*`) |
 | Container | Multi-stage Eclipse Temurin 8 image; non-root `appuser`; port **8080** |
-| Host builds | Linux/macOS via `oci8jctl`; Windows via `oci8jctl.cmd`; both via `mvn` |
+| Host builds | **`make`** (test/lint/package/docker-*); plain `mvn` also supported |
+| Published image | `ghcr.io/hrodrig/oci8j-connector:v<VERSION>` — **linux/amd64 only** |
 
 ---
 
@@ -116,8 +117,13 @@ Sensitive values must come from env / secrets managers — never commit real com
 |----------|-----------------|
 | Semver string | **`VERSION`** (no `v` prefix) |
 | Maven coordinates | `pom.xml` `<version>` must match `VERSION` |
-| Image tags | `oci8j-connector:v<VERSION>`, `:latest`, optional `-amd64`/`-arm64` |
-| Multi-arch archive | `dist/oci8j-connector-<VERSION>.oci.tar` via `build-multi` |
+| Local image tags | `oci8j-connector:<VERSION>`, `oci8j-connector:latest` via `make docker-build` |
+| GHCR image | `ghcr.io/hrodrig/oci8j-connector:v<VERSION>` and `:latest` — **linux/amd64 only** (Release workflow on tag `v*`) |
+| Fat JAR | `target/oracle8i-connector-<VERSION>.jar` (attached to GitHub Release) |
+| SBOM | Syft SPDX JSON under `dist/` (attached to GitHub Release) |
+| Quality gate | `make release-check` = lint + test + package + docker-scan (Grype) |
+
+Git flow and bump checklist: **[AGENTS.md](AGENTS.md)**.
 
 ---
 

@@ -15,7 +15,7 @@
 
 **Spec:** [SPEC.md](SPEC.md) · **Agents:** [AGENTS.md](AGENTS.md) · **Version:** [VERSION](VERSION) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Docs index:** [docs/README.md](docs/README.md)
 
-Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Builds work on **Linux/macOS** and **Windows** (`oci8jctl` / `oci8jctl.cmd`, or plain Maven).
+Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Use **`make`** for builds/gates (family workflow); plain `mvn` also works. Published images: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**).
 
 ## Features
 
@@ -87,155 +87,87 @@ export BASIC_AUTH_PASSWORD=secretpassword
 
 **Note:** If Basic Auth is enabled, all API endpoints will require authentication. The `/healthz` endpoint remains accessible without authentication for monitoring purposes.
 
-## Quick Start with oci8jctl
+## Quick Start with Make
 
-Build and run works on **Linux/macOS** (`./oci8jctl`) and **Windows** (`oci8jctl.cmd`). Same commands; Docker Desktop required for image builds.
-
-### Linux / macOS
+Primary entrypoint is the **Makefile** (same pattern as gghstats / pgwd / kzero). Requires Make, JDK 8+, Maven, and Docker for image builds.
 
 ```bash
-# Make the script executable (one-time)
-chmod +x ./oci8jctl
+# Show targets
+make help
 
-# Show all available commands
-./oci8jctl help
+# Lint (VERSION ↔ pom ↔ Dockerfile) + tests + package
+make lint
+make test
+make package
 
-# Build the Docker image
-./oci8jctl build
+# Build linux/amd64 image and start compose stack
+make docker-build
+cp docker/docker-compose.example.yml docker/docker-compose.yml   # first time; edit secrets
+make compose-up
+make health
 
-# Start the service
-./oci8jctl up
-
-# Check health status
-./oci8jctl health
-
-# Execute a test query
-QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
+# Stop
+make compose-down
 ```
 
-### Windows (cmd)
-
-```bat
-REM Show all available commands
-oci8jctl.cmd help
-
-REM Build the Docker image
-oci8jctl.cmd build
-
-REM Start the service
-oci8jctl.cmd up
-
-REM Check health status
-oci8jctl.cmd health
-
-REM Execute a test query
-set QUERY=SELECT 1 FROM DUAL
-oci8jctl.cmd query
-```
-
-Maven-only builds (no Docker) also work on both platforms:
+Maven-only (no Docker):
 
 ```bash
 mvn clean package
+java -jar target/oracle8i-connector-1.2.8.jar
 ```
 
-## Using oci8jctl
+### Release image (CI)
 
-The project includes `oci8jctl` (Linux/macOS) and `oci8jctl.cmd` (Windows) with the same commands for building and managing the application.
+Pushing annotated tag `v<VERSION>` on **`main`** runs `.github/workflows/release.yml`:
 
-### Available Commands
+- `make release-check` (lint, test, package, Grype docker-scan)
+- Push `ghcr.io/hrodrig/oci8j-connector:v<VERSION>` and `:latest` (**linux/amd64** only)
+- Attach fat JAR + Syft SBOMs to the GitHub Release
 
-#### Build Commands
+Local gate before tagging: `make release-check`.
+
+## Using Make
+
+### Quality and build
 
 ```bash
-# Show help and current version
-./oci8jctl help
-
-# Build Docker image (uses host platform - recommended for local development)
-# This will build for your current architecture (ARM64 on Apple Silicon, AMD64 on Intel)
-./oci8jctl build
-
-# Build for specific platforms (useful for cross-platform builds)
-./oci8jctl build-arm64    # Build for linux/arm64 (Apple Silicon, ARM servers)
-./oci8jctl build-amd64    # Build for linux/amd64 (Intel/AMD x86_64 servers)
-
-# Generate build-info.properties manually (usually done automatically by Maven)
-./oci8jctl generate-build-info
+make help
+make lint              # VERSION / pom / Dockerfile sync + mvn validate
+make test
+make package
+make release-check     # lint + test + package + docker-scan (needs Docker)
 ```
 
-**When to use each build command:**
-
-- `./oci8jctl build`: Use this for local development. It builds for your current platform.
-- `./oci8jctl build-amd64`: Use this when you need to build for AMD64/x86_64 servers (most common for production).
-- `./oci8jctl build-arm64`: Use this when you need to build for ARM64 servers (Apple Silicon, AWS Graviton, etc.).
-
-All build commands use `--no-cache` to ensure a fresh build and tag images with both version and `latest`.
-
-#### Service Management Commands
+### Docker
 
 ```bash
-# Start the service
-./oci8jctl up
-
-# Stop the service
-./oci8jctl down
-
-# View service logs (follow mode)
-./oci8jctl logs
-
-# Check health status
-./oci8jctl health
+make docker-build      # oci8j-connector:<VERSION> (linux/amd64)
+make docker-scan       # build + Grype (--fail-on high)
+make sbom              # Syft SPDX JSON under dist/
 ```
 
-#### Query Execution
+Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.2.8`.
+
+### Compose / ops
 
 ```bash
-# Execute a test query
-QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
-
-# Execute a more complex query
-QUERY="SELECT * FROM users WHERE id = 1" ./oci8jctl query
+make compose-up
+make logs
+make health
+make compose-down
 ```
 
-### Version Management
-
-The script reads version from `VERSION` (fallback: `pom.xml`). Override with env:
-
-```bash
-# Linux/macOS
-VERSION=1.2.8 ./oci8jctl build
-
-# Windows
-set VERSION=1.2.8
-oci8jctl.cmd build
-```
-
-Images are tagged with both the version and `latest`:
-
-- `oci8j-connector:1.2.8` and `oci8j-connector:latest`
-- `oci8j-connector:1.2.8-arm64` and `oci8j-connector:latest-arm64`
-- `oci8j-connector:1.2.8-amd64` and `oci8j-connector:latest-amd64`
+Version comes from the root **`VERSION`** file (must match `pom.xml` and Dockerfile).
 
 ### Example Workflow
 
 ```bash
-# 1. Build the image
-./oci8jctl build
-
-# 2. Start the service
-./oci8jctl up
-
-# 3. Check if it's running
-./oci8jctl health
-
-# 4. Execute a query
-QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
-
-# 5. View logs if needed
-./oci8jctl logs
-
-# 6. Stop when done
-./oci8jctl down
+make docker-build
+make compose-up
+make health
+make logs
+make compose-down
 ```
 
 ## Compilation and Execution (Maven)
@@ -409,26 +341,26 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
 
 **Security Note**: The `docker-compose.yml` file with real credentials is excluded from Git for security reasons.
 
-#### Quick Start (Using oci8jctl)
+#### Quick Start (Using Make)
 
 1. **Copy the example file:**
 
    ```bash
-   cp docker-compose.example.yml docker-compose.yml
+   cp docker/docker-compose.example.yml docker/docker-compose.yml
    ```
 
 2. **Edit with your credentials:**
 
    ```bash
-   # Edit docker-compose.yml with your actual Oracle connection details
-   nano docker-compose.yml
+   # Edit docker/docker-compose.yml with your actual Oracle connection details
+   nano docker/docker-compose.yml
    ```
 
 3. **Build and start the service:**
 
    ```bash
-   ./oci8jctl build    # Build the Docker image
-   ./oci8jctl up       # Start the service
+   make docker-build    # Build the Docker image (linux/amd64)
+   make compose-up      # Start the service
    ```
 
 #### Quick Start (Using Docker Compose directly)
@@ -480,13 +412,13 @@ environment:
 The container includes a health check that verifies the API is responding:
 
 ```bash
-# Using oci8jctl
-./oci8jctl health  # Check health status
-./oci8jctl logs    # View logs
+# Using Make
+make health  # Check health status
+make logs    # View logs
 
 # Using Docker Compose directly
-docker compose ps
-docker compose logs -f oracle8i-connector
+docker compose -f docker/docker-compose.yml ps
+docker compose -f docker/docker-compose.yml logs -f
 ```
 
 ### Important Notes
@@ -735,20 +667,22 @@ src/
 │   └── k8s-deployment.yaml
 ├── scripts/
 │   ├── generate-build-info.sh
-│   ├── generate-build-info.cmd
 │   ├── start.sh
 │   ├── test-api.sh
 │   └── test-security.sh
 ├── docs/
 │   └── README.md
+├── .github/
+│   └── workflows/
+│       ├── ci.yml
+│       └── release.yml
 ├── .dockerignore
 ├── .gitignore
 ├── .gitattributes
 ├── AGENTS.md
 ├── SPEC.md
 ├── VERSION
-├── oci8jctl
-├── oci8jctl.cmd
+├── Makefile
 └── pom.xml
 ```
 

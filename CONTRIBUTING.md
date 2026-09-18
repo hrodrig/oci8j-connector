@@ -36,7 +36,7 @@ Thank you for your interest in contributing to the Oracle 8i Connector project! 
    mvn test
    ```
 
-See **[AGENTS.md](AGENTS.md)** for git-flow / version-bump rules and **[SPEC.md](SPEC.md)** for the HTTP contract. Semver source of truth: **[VERSION](VERSION)** (keep in sync with `pom.xml`).
+See **[AGENTS.md](AGENTS.md)** for git-flow / version-bump rules and **[SPEC.md](SPEC.md)** for the HTTP contract. Semver source of truth: **[VERSION](VERSION)** (keep in sync with `pom.xml`). Prefer **`make lint`**, **`make test`**, and **`make release-check`** before proposing a release.
 
 ## Security Guidelines
 

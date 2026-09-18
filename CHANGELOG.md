@@ -9,18 +9,23 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Family docs: `VERSION`, `AGENTS.md`, `SPEC.md`, `docs/README.md`, this `CHANGELOG.md`.
-- Windows helper: `oci8jctl.cmd` and `scripts/generate-build-info.cmd` (parity with bash `oci8jctl`).
+- Family **Makefile** gates: `lint`, `test`, `package`, `docker-build`, `docker-scan`, `sbom`, `release-check`, compose helpers.
+- GitHub Actions: `.github/workflows/ci.yml` (PR/push) and `release.yml` (tag `v*` → GHCR **linux/amd64** + JAR + Syft SBOMs).
+- Documented gitflow in `AGENTS.md` (topic → develop → main → tag → sync).
 
 ### Changed
 
-- Replace `Makefile` with `oci8jctl` / `oci8jctl.cmd` for cross-platform Docker builds (Linux/macOS/Windows hosts).
-- Relocate ops assets: `docker/Dockerfile`, `docker/docker-compose.example.yml`, `kubernetes/k8s-deployment.yaml`, `scripts/*`.
-- Image helpers read semver from `VERSION` first (fallback: `pom.xml`).
+- Ops entrypoint is **Make only** (aligned with gghstats/pgwd/kzero). Removed `oci8jctl` / `oci8jctl.cmd`.
+- Relocate ops assets: `docker/`, `kubernetes/`, `scripts/`.
+- Image release platform fixed to **linux/amd64** (no multi-arch arm64 in v1).
 
 ### Fixed
 
 - Restore project license to **MIT** (WIP GPL-3 rewrite reverted). Align headers, badge, and `COPYRIGHT_*` docs. Clarify that `classes12.jar` remains under Oracle terms.
+
+### Removed
+
+- `oci8jctl`, `oci8jctl.cmd`, `scripts/generate-build-info.cmd` (Windows ctl helpers).
 
 ## [1.2.8] - 2025-12-14
 
