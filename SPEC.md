@@ -1,6 +1,6 @@
 # Spec — HTTP API and ops contract
 
-Normative operator contracts for **oci8j-connector** as of **v1.2.8**.  
+Normative operator contracts for **oci8j-connector** as of **v1.3.0**.  
 Narrative install/env: **[README.md](README.md)**. Agent / release rules: **[AGENTS.md](AGENTS.md)**.
 
 > **Stability:** Documented routes, JSON fields, and environment variable names are **stable** within the 1.x line — no rename/removal without a SemVer major bump. **Additive** fields, routes, and env vars are allowed in minor releases.
