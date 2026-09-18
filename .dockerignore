@@ -83,6 +83,7 @@ azure-pipelines.yml
 
 # Docker files (except the one we're building)
 Dockerfile*
+!docker/Dockerfile
 docker-compose*.yml
 docker-compose*.yaml
 .dockerignore
@@ -149,4 +150,4 @@ credentials/
 # Keep only essential files for Docker build:
 # - src/ (source code)
 # - lib/ (Oracle JDBC driver)
-# - Dockerfile (the one being built)
+# - docker/Dockerfile (the one being built)

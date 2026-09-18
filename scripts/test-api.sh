@@ -1,7 +1,9 @@
 #!/bin/bash
-
-# Script to test Oracle 8i Connector API
-
+#
+# oci8j-connector - Oracle 8i REST API
+# Copyright (c) 2024 - 2026 Hermes Rodríguez
+# SPDX-License-Identifier: MIT
+#
 BASE_URL="http://localhost:8080"
 
 # Basic Auth credentials (if enabled)

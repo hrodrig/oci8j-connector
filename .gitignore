@@ -17,15 +17,23 @@
 !README.md
 !LICENSE
 !CONTRIBUTING.md
-!Dockerfile
-!docker-compose.example.yml
-!k8s-deployment.yaml
+!CHANGELOG.md
+!AGENTS.md
+!SPEC.md
+!VERSION
+!COPYRIGHT_GUIDE.md
+!COPYRIGHT_HEADER.txt
+!CODE_OF_CONDUCT.md
+!docker/
+!docker/**
+!kubernetes/
+!kubernetes/**
 !config.example.yaml
-!generate-build-info.sh
-!test-api.sh
-!test-security.sh
-!cleanup-dsstore.sh
-!Makefile
+!examples.sql
+!scripts/
+!scripts/**
+!oci8jctl
+!oci8jctl.cmd
 !.dockerignore
 
 # Include Maven wrapper (if exists)
@@ -40,20 +48,17 @@
 
 # Include scripts
 !scripts/
-!scripts/**
 
 # Include configuration templates
 !*.example.*
 !*.template.*
 
 # Include Docker files
-!Dockerfile*
+!docker/Dockerfile
 !docker-compose*.yml
 !docker-compose*.yaml
 
 # Include Kubernetes manifests
-!*.yaml
-!*.yml
 !k8s-*
 !kubernetes-*
 
@@ -69,6 +74,8 @@ config.yaml
 application.yml
 application.properties
 docker-compose.yml
+docker/docker-compose.yml
+**/docker-compose.yml
 *.env
 .env
 .env.local

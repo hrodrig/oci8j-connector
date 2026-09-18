@@ -1,8 +1,9 @@
 #!/bin/bash
-
-# Test script for Oracle 8i Connector Security Features
-# This script demonstrates the forbidden keywords functionality
-
+#
+# oci8j-connector - Oracle 8i REST API
+# Copyright (c) 2024 - 2026 Hermes Rodríguez
+# SPDX-License-Identifier: MIT
+#
 echo "🔒 Testing Oracle 8i Connector Security Features"
 echo "================================================"
 echo ""

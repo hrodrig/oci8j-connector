@@ -23,11 +23,11 @@ Thank you for your interest in contributing to the Oracle 8i Connector project! 
    ```bash
    # Copy example configuration
    cp config.example.yaml config.yaml
-   cp docker-compose.example.yml docker-compose.yml
+   cp docker/docker-compose.example.yml docker/docker-compose.yml
    
    # Edit with your Oracle connection details
    nano config.yaml
-   nano docker-compose.yml
+   nano docker/docker-compose.yml
    ```
 
 4. **Build and test**:
@@ -35,6 +35,8 @@ Thank you for your interest in contributing to the Oracle 8i Connector project! 
    mvn clean compile
    mvn test
    ```
+
+See **[AGENTS.md](AGENTS.md)** for git-flow / version-bump rules and **[SPEC.md](SPEC.md)** for the HTTP contract. Semver source of truth: **[VERSION](VERSION)** (keep in sync with `pom.xml`).
 
 ## Security Guidelines
 

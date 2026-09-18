@@ -1,3 +1,9 @@
+<!--
+ * oci8j-connector - Oracle 8i REST API
+ * Copyright (c) 2024 - 2026 Hermes Rodríguez
+ * SPDX-License-Identifier: MIT
+ -->
+
 # Oracle 8i Connector v1.2.8
 
 ![Version](https://img.shields.io/badge/version-1.2.8-blue.svg)
@@ -7,7 +13,9 @@
 ![Maven](https://img.shields.io/badge/Maven-3.9+-red.svg)
 ![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)
 
-Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API.
+**Spec:** [SPEC.md](SPEC.md) · **Agents:** [AGENTS.md](AGENTS.md) · **Version:** [VERSION](VERSION) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Docs index:** [docs/README.md](docs/README.md)
+
+Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Builds work on **Linux/macOS** and **Windows** (`oci8jctl` / `oci8jctl.cmd`, or plain Maven).
 
 ## Features
 
@@ -79,30 +87,61 @@ export BASIC_AUTH_PASSWORD=secretpassword
 
 **Note:** If Basic Auth is enabled, all API endpoints will require authentication. The `/healthz` endpoint remains accessible without authentication for monitoring purposes.
 
-## Quick Start with Makefile
+## Quick Start with oci8jctl
 
-The easiest way to build and run the application is using the included `Makefile`:
+Build and run works on **Linux/macOS** (`./oci8jctl`) and **Windows** (`oci8jctl.cmd`). Same commands; Docker Desktop required for image builds.
+
+### Linux / macOS
 
 ```bash
+# Make the script executable (one-time)
+chmod +x ./oci8jctl
+
 # Show all available commands
-make help
+./oci8jctl help
 
 # Build the Docker image
-make build
+./oci8jctl build
 
 # Start the service
-make up
+./oci8jctl up
 
 # Check health status
-make health
+./oci8jctl health
 
 # Execute a test query
-make query QUERY="SELECT 1 FROM DUAL"
+QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
 ```
 
-## Using Makefile
+### Windows (cmd)
 
-The project includes a comprehensive `Makefile` with convenient commands for building and managing the application.
+```bat
+REM Show all available commands
+oci8jctl.cmd help
+
+REM Build the Docker image
+oci8jctl.cmd build
+
+REM Start the service
+oci8jctl.cmd up
+
+REM Check health status
+oci8jctl.cmd health
+
+REM Execute a test query
+set QUERY=SELECT 1 FROM DUAL
+oci8jctl.cmd query
+```
+
+Maven-only builds (no Docker) also work on both platforms:
+
+```bash
+mvn clean package
+```
+
+## Using oci8jctl
+
+The project includes `oci8jctl` (Linux/macOS) and `oci8jctl.cmd` (Windows) with the same commands for building and managing the application.
 
 ### Available Commands
 
@@ -110,24 +149,25 @@ The project includes a comprehensive `Makefile` with convenient commands for bui
 
 ```bash
 # Show help and current version
-make help
+./oci8jctl help
 
 # Build Docker image (uses host platform - recommended for local development)
 # This will build for your current architecture (ARM64 on Apple Silicon, AMD64 on Intel)
-make build
+./oci8jctl build
 
 # Build for specific platforms (useful for cross-platform builds)
-make build-arm64    # Build for linux/arm64 (Apple Silicon, ARM servers)
-make build-amd64    # Build for linux/amd64 (Intel/AMD x86_64 servers)
+./oci8jctl build-arm64    # Build for linux/arm64 (Apple Silicon, ARM servers)
+./oci8jctl build-amd64    # Build for linux/amd64 (Intel/AMD x86_64 servers)
 
 # Generate build-info.properties manually (usually done automatically by Maven)
-make generate-build-info
+./oci8jctl generate-build-info
 ```
 
 **When to use each build command:**
-- `make build`: Use this for local development. It builds for your current platform.
-- `make build-amd64`: Use this when you need to build for AMD64/x86_64 servers (most common for production).
-- `make build-arm64`: Use this when you need to build for ARM64 servers (Apple Silicon, AWS Graviton, etc.).
+
+- `./oci8jctl build`: Use this for local development. It builds for your current platform.
+- `./oci8jctl build-amd64`: Use this when you need to build for AMD64/x86_64 servers (most common for production).
+- `./oci8jctl build-arm64`: Use this when you need to build for ARM64 servers (Apple Silicon, AWS Graviton, etc.).
 
 All build commands use `--no-cache` to ensure a fresh build and tag images with both version and `latest`.
 
@@ -135,37 +175,43 @@ All build commands use `--no-cache` to ensure a fresh build and tag images with 
 
 ```bash
 # Start the service
-make up
+./oci8jctl up
 
 # Stop the service
-make down
+./oci8jctl down
 
 # View service logs (follow mode)
-make logs
+./oci8jctl logs
 
 # Check health status
-make health
+./oci8jctl health
 ```
 
 #### Query Execution
 
 ```bash
 # Execute a test query
-make query QUERY="SELECT 1 FROM DUAL"
+QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
 
 # Execute a more complex query
-make query QUERY="SELECT * FROM users WHERE id = 1"
+QUERY="SELECT * FROM users WHERE id = 1" ./oci8jctl query
 ```
 
 ### Version Management
 
-The Makefile automatically reads the version from `pom.xml`. You can override it:
+The script reads version from `VERSION` (fallback: `pom.xml`). Override with env:
 
 ```bash
-make build VERSION=1.2.8
+# Linux/macOS
+VERSION=1.2.8 ./oci8jctl build
+
+# Windows
+set VERSION=1.2.8
+oci8jctl.cmd build
 ```
 
 Images are tagged with both the version and `latest`:
+
 - `oci8j-connector:1.2.8` and `oci8j-connector:latest`
 - `oci8j-connector:1.2.8-arm64` and `oci8j-connector:latest-arm64`
 - `oci8j-connector:1.2.8-amd64` and `oci8j-connector:latest-amd64`
@@ -174,22 +220,22 @@ Images are tagged with both the version and `latest`:
 
 ```bash
 # 1. Build the image
-make build
+./oci8jctl build
 
 # 2. Start the service
-make up
+./oci8jctl up
 
 # 3. Check if it's running
-make health
+./oci8jctl health
 
 # 4. Execute a query
-make query QUERY="SELECT 1 FROM DUAL"
+QUERY="SELECT 1 FROM DUAL" ./oci8jctl query
 
 # 5. View logs if needed
-make logs
+./oci8jctl logs
 
 # 6. Stop when done
-make down
+./oci8jctl down
 ```
 
 ## Compilation and Execution (Maven)
@@ -220,6 +266,7 @@ java -jar target/oracle8i-connector-1.2.8.jar
 Executes a SQL query and returns the results in JSON format.
 
 **Request Body:**
+
 ```json
 {
   "query": "SELECT * FROM emp WHERE deptno = ?",
@@ -228,6 +275,7 @@ Executes a SQL query and returns the results in JSON format.
 ```
 
 **Response (SELECT query):**
+
 ```json
 {
   "success": true,
@@ -246,6 +294,7 @@ Executes a SQL query and returns the results in JSON format.
 ```
 
 **Response (INSERT/UPDATE/DELETE query):**
+
 ```json
 {
   "success": true,
@@ -261,6 +310,7 @@ Executes a SQL query and returns the results in JSON format.
 **Liveness Probe** - Verifies the application is running (always returns 200 OK).
 
 **Response:**
+
 ```json
 {
   "status": "UP",
@@ -275,6 +325,7 @@ Executes a SQL query and returns the results in JSON format.
 **Readiness Probe** - Verifies the application is ready to serve traffic (includes database connectivity).
 
 **Response:**
+
 ```json
 {
   "status": "READY",
@@ -290,6 +341,7 @@ Executes a SQL query and returns the results in JSON format.
 Gets application information.
 
 **Response:**
+
 ```json
 {
   "name": "Oracle 8i Connector",
@@ -357,39 +409,46 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
 
 **Security Note**: The `docker-compose.yml` file with real credentials is excluded from Git for security reasons.
 
-#### Quick Start (Using Makefile)
+#### Quick Start (Using oci8jctl)
 
 1. **Copy the example file:**
+
    ```bash
    cp docker-compose.example.yml docker-compose.yml
    ```
 
 2. **Edit with your credentials:**
+
    ```bash
    # Edit docker-compose.yml with your actual Oracle connection details
    nano docker-compose.yml
    ```
 
 3. **Build and start the service:**
+
    ```bash
-   make build    # Build the Docker image
-   make up        # Start the service
+   ./oci8jctl build    # Build the Docker image
+   ./oci8jctl up       # Start the service
    ```
 
 #### Quick Start (Using Docker Compose directly)
 
 1. **Copy the example file:**
+
    ```bash
+   cd docker
    cp docker-compose.example.yml docker-compose.yml
    ```
 
 2. **Edit with your credentials:**
+
    ```bash
    # Edit docker-compose.yml with your actual Oracle connection details
    nano docker-compose.yml
    ```
 
 3. **Start the service:**
+
    ```bash
    docker compose up -d
    ```
@@ -421,9 +480,9 @@ environment:
 The container includes a health check that verifies the API is responding:
 
 ```bash
-# Using Makefile
-make health        # Check health status
-make logs          # View logs
+# Using oci8jctl
+./oci8jctl health  # Check health status
+./oci8jctl logs    # View logs
 
 # Using Docker Compose directly
 docker compose ps
@@ -441,7 +500,7 @@ docker compose logs -f oracle8i-connector
 
 The application supports configurable query security through a forbidden keywords list. This allows you to block specific SQL keywords to prevent potentially dangerous operations.
 
-#### Configuration
+#### Security configuration
 
 Add the security section to your `config.yaml`:
 
@@ -494,6 +553,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 #### Recommended Keywords to Block
 
 ##### DDL Commands (Data Definition Language)
+
 - `DROP` - Delete database objects
 - `CREATE` - Create database objects
 - `ALTER` - Modify object structure
@@ -502,6 +562,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `COMMENT` - Add comments
 
 ##### DML Commands (Data Manipulation Language)
+
 - `DELETE` - Delete records
 - `UPDATE` - Modify records
 - `INSERT` - Insert records
@@ -509,6 +570,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `REPLACE` - Replace data
 
 ##### Transaction Control Commands
+
 - `COMMIT` - Commit transactions
 - `ROLLBACK` - Rollback transactions
 - `SAVEPOINT` - Create savepoints
@@ -516,6 +578,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `UNLOCK` - Unlock resources
 
 ##### System Control Commands
+
 - `GRANT` - Grant privileges
 - `REVOKE` - Revoke privileges
 - `AUDIT` - Audit actions
@@ -524,6 +587,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `STARTUP` - Startup database
 
 ##### Stored Procedure Commands
+
 - `EXEC` - Execute procedures
 - `EXECUTE` - Execute procedures
 - `CALL` - Call procedures
@@ -534,6 +598,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `CONSTANT` - Define constants
 
 ##### Flow Control Commands
+
 - `IF` - Conditional statements
 - `CASE` - Decision structures
 - `WHEN` - Conditional clauses
@@ -556,6 +621,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `RESUME` - Resume processes
 
 ##### Optimization and Performance Commands
+
 - `ANALYZE` - Analyze objects
 - `EXPLAIN` - Explain execution plans
 - `OPTIMIZE` - Optimize queries
@@ -568,6 +634,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `NOPARALLEL` - Disable parallelism
 
 ##### Utility Commands
+
 - `DESCRIBE` - Describe objects
 - `SHOW` - Show information
 - `HELP` - Help
@@ -585,6 +652,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `RESUME` - Resume execution
 
 ##### Recovery and Backup Commands
+
 - `RECOVER` - Recover database
 - `FLASHBACK` - Time travel
 - `PURGE` - Clean obsolete data
@@ -596,6 +664,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 - `EXPORT` - Export data
 
 ##### Validation and Maintenance Commands
+
 - `VALIDATE` - Validate data
 - `INVALIDATE` - Invalidate objects
 - `REFRESH` - Refresh views
@@ -631,7 +700,7 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 
 ## Project Structure
 
-```
+```text
 src/
 ├── main/
 │   ├── java/
@@ -658,16 +727,28 @@ src/
 ├── lib/
 │   └── classes12.jar
 ├── config.example.yaml
-├── docker-compose.example.yml
-├── Dockerfile
+├── docker/
+│   ├── Dockerfile
+│   ├── docker-compose.example.yml
+│   └── docker-compose.yml
+├── kubernetes/
+│   └── k8s-deployment.yaml
+├── scripts/
+│   ├── generate-build-info.sh
+│   ├── generate-build-info.cmd
+│   ├── start.sh
+│   ├── test-api.sh
+│   └── test-security.sh
+├── docs/
+│   └── README.md
 ├── .dockerignore
 ├── .gitignore
 ├── .gitattributes
-├── k8s-deployment.yaml
-├── generate-build-info.sh
-├── test-api.sh
-├── test-security.sh
-├── cleanup-dsstore.sh
+├── AGENTS.md
+├── SPEC.md
+├── VERSION
+├── oci8jctl
+├── oci8jctl.cmd
 └── pom.xml
 ```
 
@@ -680,6 +761,7 @@ src/
 This software is provided for use at your own risk. The authors and contributors shall not be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
 
 **By using this software, you acknowledge that you have read this disclaimer, understand it, and agree to be bound by its terms. You assume full responsibility for any consequences that may result from the use of this software, including but not limited to:**
+
 - Data loss or corruption
 - Security breaches
 - Infrastructure failures
@@ -687,6 +769,7 @@ This software is provided for use at your own risk. The authors and contributors
 - Any other damages or losses
 
 It is your responsibility to:
+
 - Test the software thoroughly in a non-production environment
 - Review and understand the code before deployment
 - Implement appropriate security measures
@@ -695,4 +778,6 @@ It is your responsibility to:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+**Note:** `lib/classes12.jar` is an Oracle proprietary JDBC driver and is **not** covered by this MIT license. Its use and redistribution follow Oracle’s terms.

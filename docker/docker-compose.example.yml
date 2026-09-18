@@ -1,6 +1,8 @@
 services:
-  oracle8i-connector:
-    build: .
+  oci8j-connector:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -10,16 +12,12 @@ services:
       - ORACLE_SID=your-sid
       - ORACLE_USERNAME=your-username
       - ORACLE_PASSWORD=your-password
-      
       # Query timeout (in milliseconds)
       - ORACLE_QUERY_TIMEOUT=120000
-      
       # Basic Authentication (optional)
       - BASIC_AUTH_ENABLED=false
       - BASIC_AUTH_USERNAME=admin
       - BASIC_AUTH_PASSWORD=your-secret-password
-    volumes:
-      - ./lib:/app/lib
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/oci8j-connector/healthz"]
