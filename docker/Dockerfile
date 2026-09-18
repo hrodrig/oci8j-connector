@@ -23,8 +23,8 @@ COPY lib/classes12.jar lib/
 # Copy source code
 COPY src/ src/
 
-# Compile the application
-RUN mvn clean package -DskipTests
+# Compile + unit tests (local/CI gate inside the image build)
+RUN mvn clean test package -B
 
 # Verify that the JAR was created
 RUN ls -la target/

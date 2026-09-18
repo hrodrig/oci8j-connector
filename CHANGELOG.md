@@ -9,9 +9,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Family **Makefile** gates: `lint`, `test`, `package`, `docker-build`, `docker-scan`, `sbom`, `release-check`, compose helpers.
+- Family **Makefile** gates: `lint`, `test`, `package`, `docker-build`, `docker-scan`, `sbom`, `release-check`, compose helpers, `server`.
 - GitHub Actions: `.github/workflows/ci.yml` (PR/push) and `release.yml` (tag `v*` → GHCR **linux/amd64** + JAR + Syft SBOMs).
 - Documented gitflow in `AGENTS.md` (topic → develop → main → tag → sync).
+- `GET /` and unknown paths return minimal JSON `{"code":404,"message":"Not found"}` (no Whitelabel HTML); discovery stays on `GET /api/v1/oci8j-connector/info`.
+- Anonymized `docs/sample-response.json`.
 
 ### Changed
 

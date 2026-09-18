@@ -34,9 +34,12 @@ public class BasicAuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Skip authentication for health check endpoints (for monitoring and Kubernetes probes)
+        // Skip authentication for probes, root discovery, and error JSON
         String requestURI = httpRequest.getRequestURI();
-        if (requestURI.endsWith("/healthz") || requestURI.endsWith("/ready")) {
+        if ("/".equals(requestURI)
+                || "/error".equals(requestURI)
+                || requestURI.endsWith("/healthz")
+                || requestURI.endsWith("/ready")) {
             chain.doFilter(request, response);
             return;
         }

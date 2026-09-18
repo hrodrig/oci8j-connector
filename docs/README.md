@@ -11,5 +11,6 @@
 | [COPYRIGHT_GUIDE.md](../COPYRIGHT_GUIDE.md) | License headers (MIT) |
 | [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Community norms |
 | [Makefile](../Makefile) | Build, lint, Docker, release-check |
+| [sample-response.json](sample-response.json) | Anonymized sample `POST /query` response (`user_tables`-style) |
 
 Operator examples live under `docker/` and `kubernetes/`. CI: `.github/workflows/ci.yml` / `release.yml`.

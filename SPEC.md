@@ -29,18 +29,30 @@ Base path: **`/api/v1/oci8j-connector`**
 
 | Route | Method | Auth | Notes |
 |-------|--------|------|--------|
+| `/` | `GET` | **Always public** | Minimal **404** JSON: `{"code":404,"message":"Not found"}` |
 | `/query` | `POST` | Basic Auth if enabled | Execute SQL; JSON body |
 | `/healthz` | `GET` | **Always public** | Liveness; **200** even if DB down |
 | `/ready` | `GET` | Basic Auth if enabled | Readiness; **200** only if DB connected |
-| `/info` | `GET` | Basic Auth if enabled | App/build/git/auth/endpoints metadata |
+| `/info` | `GET` | Basic Auth if enabled | App/build/git/auth/**endpoints** discovery |
+
+Unknown paths return the same minimal JSON 404 (no Whitelabel HTML).
 
 CORS: controller allows `origins = "*"` (current behavior).
 
-When Basic Auth is enabled, **`/healthz` remains accessible without credentials** for monitoring. Other routes under the base path require valid credentials.
+When Basic Auth is enabled, **`/`**, **`/healthz`**, and **`/ready`** remain accessible without credentials. Other routes under the API base path require valid credentials.
 
 ---
 
 ## 3. API contracts
+
+### 3.0 `GET /`
+
+- **404** `application/json` → `{"code":404,"message":"Not found"}`
+- Always public. API discovery: **`GET /api/v1/oci8j-connector/info`**.
+
+### 3.0.1 Unknown paths
+
+- Same minimal **404** JSON via `/error` (no Whitelabel HTML).
 
 ### 3.1 `POST /api/v1/oci8j-connector/query`
 

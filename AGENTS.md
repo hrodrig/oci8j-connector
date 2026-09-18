@@ -56,13 +56,20 @@ Do the **VERSION bump as a dedicated commit on `develop`** (via PR) after featur
 
 | Target | Purpose |
 |--------|---------|
-| `make test` | `mvn test` |
+| `make help` | List targets / current `VERSION` / GHCR image |
+| `make test` | `mvn test` (host `mvn`, else container `DOCKER_MVN=1`) |
 | `make lint` | VERSION ↔ pom ↔ Dockerfile sync + `mvn validate` |
-| `make package` | Fat JAR |
-| `make docker-build` | Local image `oci8j-connector:<VERSION>` (linux/amd64) |
+| `make package` | Fat JAR (`-DskipTests`) |
+| `make clean` | `mvn clean` + remove `dist/` |
+| `make server` | Build image if missing; `docker compose up --build` (foreground) |
+| `make docker-build` | Local image `oci8j-connector:<VERSION>` (**linux/amd64**; runs `mvn test package` in Dockerfile) |
 | `make docker-scan` | Build + Grype (`--fail-on high`) |
+| `make sbom` | Syft SPDX JSON under `dist/` |
 | `make release-check` | lint + test + package + docker-scan |
-| `make compose-up` / `compose-down` / `logs` / `health` | Local compose stack |
+| `make compose-up` / `compose-down` / `logs` / `health` | Local compose stack (`docker/docker-compose.yml`) |
+
+Force Maven-in-container: `make test DOCKER_MVN=1`. Compose file required for `server` / compose targets (copy from `docker/docker-compose.example.yml`).
+
 
 ## License note
 

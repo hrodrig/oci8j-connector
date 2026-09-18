@@ -482,6 +482,31 @@ curl -X POST http://localhost:8080/api/v1/oci8j-connector/query \
 # Response: {"success": false, "message": "Query blocked due to forbidden keyword: DROP"}
 ```
 
+List tables for the current Oracle 8i user:
+
+```sql
+SELECT table_name FROM user_tables;
+```
+
+Scope variants:
+
+```sql
+-- All accessible tables (owned + granted)
+SELECT owner, table_name FROM all_tables ORDER BY owner, table_name;
+
+-- Full data dictionary (requires DBA / SELECT_CATALOG_ROLE)
+SELECT owner, table_name FROM dba_tables;
+```
+
+Optional row counts and comments:
+
+```sql
+SELECT table_name, num_rows, last_analyzed FROM user_tables;
+SELECT table_name FROM user_tab_comments WHERE table_type = 'TABLE';
+```
+
+`user_tables` is the direct answer for “my tables”. Use `all_tables` for tables visible via grants from other schemas.
+
 #### Recommended Keywords to Block
 
 ##### DDL Commands (Data Definition Language)

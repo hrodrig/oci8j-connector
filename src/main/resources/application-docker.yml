@@ -7,6 +7,12 @@ oracle8i:
   password: ${ORACLE_PASSWORD:password}
   driver: oracle.jdbc.driver.OracleDriver
 
+# Prefer JSON /error over Whitelabel HTML
+server:
+  error:
+    whitelabel:
+      enabled: false
+
 # Logging configuration for Docker
 logging:
   level:

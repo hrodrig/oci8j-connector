@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "message": "Query executed successfully",
+  "data": [
+    {
+      "NUM_ROWS": 14,
+      "TABLE_NAME": "DEPT",
+      "LAST_ANALYZED": "2024-01-15T10:00:00.000+00:00"
+    },
+    {
+      "NUM_ROWS": 856,
+      "TABLE_NAME": "EMP",
+      "LAST_ANALYZED": "2024-01-15T10:00:12.000+00:00"
+    },
+    {
+      "NUM_ROWS": null,
+      "TABLE_NAME": "EMP_AUDIT",
+      "LAST_ANALYZED": null
+    },
+    {
+      "NUM_ROWS": 3201,
+      "TABLE_NAME": "ORDERS",
+      "LAST_ANALYZED": "2024-03-02T08:30:45.000+00:00"
+    },
+    {
+      "NUM_ROWS": 0,
+      "TABLE_NAME": "ORDER_ITEMS",
+      "LAST_ANALYZED": "2024-03-02T08:31:01.000+00:00"
+    },
+    {
+      "NUM_ROWS": 42,
+      "TABLE_NAME": "PRODUCTS",
+      "LAST_ANALYZED": "2024-02-20T14:12:00.000+00:00"
+    },
+    {
+      "NUM_ROWS": null,
+      "TABLE_NAME": "PRODUCT_NOTES",
+      "LAST_ANALYZED": null
+    },
+    {
+      "NUM_ROWS": 5,
+      "TABLE_NAME": "REGIONS",
+      "LAST_ANALYZED": "2023-11-01T09:00:00.000+00:00"
+    }
+  ],
+  "executionTimeMs": 42,
+  "rowCount": 8
+}

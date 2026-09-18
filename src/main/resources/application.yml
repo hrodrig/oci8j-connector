@@ -4,6 +4,12 @@ spring:
   config:
     import: classpath:config.yaml
 
+# Prefer JSON /error over Whitelabel HTML
+server:
+  error:
+    whitelabel:
+      enabled: false
+
 # Basic Authentication (optional)
 # Only enabled if both username and password are provided
 basic_auth:
