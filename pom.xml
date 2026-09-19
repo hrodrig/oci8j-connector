@@ -18,6 +18,9 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot.version>2.7.18</spring.boot.version>
+        <!-- Override EOL Boot 2.7 managed versions for Critical CVE remediation -->
+        <tomcat.version>9.0.122</tomcat.version>
+        <spring-framework.version>5.3.39</spring-framework.version>
     </properties>
 
     <parent>

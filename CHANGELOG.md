@@ -7,9 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Documentation
+### Security
 
-- Compose examples pull **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** by default (`OCI8J_IMAGE` override); `make server` / `compose-up` run `docker compose pull` instead of `--build`.
+- Override managed Tomcat **9.0.122** and Spring Framework **5.3.39** on Boot 2.7.18 to clear Critical findings in `make docker-scan` / Grype.
+
+## [1.4.0] - 2026-09-19
 
 ## [1.4.0] - 2026-09-19
 
@@ -23,6 +25,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Compose examples pull **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** by default (`OCI8J_IMAGE` override); `make server` / `compose-up` run `docker compose pull` instead of `--build`.
+- Docker TLS edge examples: Traefik v3 (**Let's Encrypt** + file certs), Caddy 2, and `nginxinc/nginx-unprivileged` under `docker/tls/` (app HTTP; `TRUSTED_PROXIES` for XFF).
+- Nested YAML under `edge` / `hardening` / `openapi` in `config.example.yaml` (env placeholders in packaged `config.yaml`).
 - README opens with **problem → solution** (Oracle 8i / `classes12` gap vs REST bridge).
 - SPEC §7 A/B/C frozen and marked shipped for **v1.4.0**; README env/YAML section for edge/probes/hardening/OpenAPI.
 - Compose example documents §7 environment variables (defaults off / public probes).
