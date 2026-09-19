@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * API IP allow-list using resolved client IP (SPEC §7.2).
- * Empty ALLOWED_CIDRS = no filter. Probes exempt.
+ * IP allow-lists (SPEC §7.2 / §7.2.1).
+ * API routes: ALLOWED_CIDRS. Probes: PROBES_ALLOWED_CIDRS only.
  */
 @Component
 public class IpAllowListFilter implements Filter {
@@ -22,33 +22,47 @@ public class IpAllowListFilter implements Filter {
 
     private CidrMatcher trustedProxies;
     private CidrMatcher allowedCidrs;
+    private CidrMatcher probesAllowedCidrs;
 
     @PostConstruct
     void initMatchers() {
         trustedProxies = new CidrMatcher(edgeAccessConfig.getTrustedProxies());
         allowedCidrs = new CidrMatcher(edgeAccessConfig.getAllowedCidrs());
+        probesAllowedCidrs = new CidrMatcher(edgeAccessConfig.getProbesAllowedCidrs());
     }
 
     // package-visible for tests
     void setMatchers(CidrMatcher trusted, CidrMatcher allowed) {
+        setMatchers(trusted, allowed, new CidrMatcher(""));
+    }
+
+    void setMatchers(CidrMatcher trusted, CidrMatcher allowed, CidrMatcher probesAllowed) {
         this.trustedProxies = trusted;
         this.allowedCidrs = allowed;
+        this.probesAllowedCidrs = probesAllowed;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        if (allowedCidrs == null || allowedCidrs.isEmpty()) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String uri = httpRequest.getRequestURI();
+
+        if (ProbePaths.isProbe(uri)) {
+            if (probesAllowedCidrs != null && !probesAllowedCidrs.isEmpty()) {
+                String clientIp = ClientIpResolver.resolve(httpRequest, trustedProxies);
+                if (!probesAllowedCidrs.contains(clientIp)) {
+                    forbid(httpResponse);
+                    return;
+                }
+            }
             chain.doFilter(request, response);
             return;
         }
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        String uri = httpRequest.getRequestURI();
-        if (isProbe(uri)) {
+        if (allowedCidrs == null || allowedCidrs.isEmpty()) {
             chain.doFilter(request, response);
             return;
         }
@@ -59,12 +73,12 @@ public class IpAllowListFilter implements Filter {
             return;
         }
 
+        forbid(httpResponse);
+    }
+
+    private static void forbid(HttpServletResponse httpResponse) throws IOException {
         httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         httpResponse.setContentType("application/json");
         httpResponse.getWriter().write("{\"code\":403,\"message\":\"Forbidden\"}");
-    }
-
-    private static boolean isProbe(String uri) {
-        return uri != null && (uri.endsWith("/healthz") || uri.endsWith("/ready") || uri.endsWith("/readyz"));
     }
 }

@@ -67,10 +67,33 @@ class IpAllowListFilterTest {
     }
 
     @Test
-    void probeExemptFromAllowList() throws Exception {
+    void probeExemptFromApiAllowList() throws Exception {
         filter.setMatchers(new CidrMatcher(""), new CidrMatcher("10.0.0.0/8"));
         when(request.getRequestURI()).thenReturn("/api/v1/oci8j-connector/healthz");
         when(request.getRemoteAddr()).thenReturn("8.8.8.8");
+
+        filter.doFilter(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+    }
+
+    @Test
+    void probeCidrDeniesOutside() throws Exception {
+        filter.setMatchers(new CidrMatcher(""), new CidrMatcher(""), new CidrMatcher("10.0.0.0/8"));
+        when(request.getRequestURI()).thenReturn("/api/v1/oci8j-connector/readyz");
+        when(request.getRemoteAddr()).thenReturn("8.8.8.8");
+
+        filter.doFilter(request, response, chain);
+
+        verify(chain, never()).doFilter(any(), any());
+        verify(response).setStatus(403);
+    }
+
+    @Test
+    void probeCidrAllowsInsideEvenIfApiListDifferent() throws Exception {
+        filter.setMatchers(new CidrMatcher(""), new CidrMatcher("192.168.0.0/16"), new CidrMatcher("10.0.0.0/8"));
+        when(request.getRequestURI()).thenReturn("/api/v1/oci8j-connector/ready");
+        when(request.getRemoteAddr()).thenReturn("10.1.2.3");
 
         filter.doFilter(request, response, chain);
 
