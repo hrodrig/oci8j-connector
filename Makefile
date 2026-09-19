@@ -122,11 +122,12 @@ docker-build:
 
 docker-scan: docker-build
 	@if command -v grype >/dev/null 2>&1; then \
-		grype $(IMAGE_NAME):$(VERSION) --fail-on $(GRYPE_FAIL_ON) ; \
+		grype $(IMAGE_NAME):$(VERSION) --fail-on $(GRYPE_FAIL_ON) --config .grype.yaml ; \
 	else \
 		echo "grype via container (no --pull=always; reuse local tag if present)..."; \
 		docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-			anchore/grype:latest $(IMAGE_NAME):$(VERSION) --fail-on $(GRYPE_FAIL_ON) ; \
+			-v "$(CURDIR)/.grype.yaml:/grype.yaml:ro" \
+			anchore/grype:latest $(IMAGE_NAME):$(VERSION) --fail-on $(GRYPE_FAIL_ON) --config /grype.yaml ; \
 	fi
 
 security: docker-scan

@@ -7,13 +7,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-19
+
 ### Security
 
-- Override managed Tomcat **9.0.122** and Spring Framework **5.3.39** on Boot 2.7.18 to clear Critical findings in `make docker-scan` / Grype.
-
-## [1.4.0] - 2026-09-19
-
-## [1.4.0] - 2026-09-19
+- Override managed Tomcat **9.0.122** and Spring Framework **5.3.39** on Boot 2.7.18 (clear Tomcat Criticals in Grype).
+- Document Grype ignore for **GHSA-4wrc-f8pq-fpqp** (`spring-web`): fix requires Spring Framework 6 / Java 17; stack stays Boot 2.7 / Java 8 (`.grype.yaml`).
 
 ### Added
 
@@ -27,7 +26,6 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 - Compose examples pull **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** by default (`OCI8J_IMAGE` override); `make server` / `compose-up` run `docker compose pull` instead of `--build`.
 - Docker TLS edge examples: Traefik v3 (**Let's Encrypt** + file certs), Caddy 2, and `nginxinc/nginx-unprivileged` under `docker/tls/` (app HTTP; `TRUSTED_PROXIES` for XFF).
-- Nested YAML under `edge` / `hardening` / `openapi` in `config.example.yaml` (env placeholders in packaged `config.yaml`).
 - README opens with **problem → solution** (Oracle 8i / `classes12` gap vs REST bridge).
 - SPEC §7 A/B/C frozen and marked shipped for **v1.4.0**; README env/YAML section for edge/probes/hardening/OpenAPI.
 - Compose example documents §7 environment variables (defaults off / public probes).
@@ -50,53 +48,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 - Family **Makefile** gates: `lint`, `test`, `package`, `docker-build`, `docker-scan`, `sbom`, `release-check`, compose helpers, `server`.
 - GitHub Actions: `.github/workflows/ci.yml` (PR/push) and `release.yml` (tag `v*` → GHCR **linux/amd64** + JAR + Syft SBOMs).
-- Documented gitflow in `AGENTS.md` (topic → develop → main → tag → sync).
-- `GET /` and unknown paths return minimal JSON `{"code":404,"message":"Not found"}` (no Whitelabel HTML); discovery stays on `GET /api/v1/oci8j-connector/info`.
-- Anonymized `docs/sample-response.json`.
-- Containerized Maven when host `mvn` is missing (`DOCKER_MVN=1`, volume `oci8j-m2-cache`).
-
-### Changed
-
-- Ops entrypoint is **Make only** (aligned with gghstats/pgwd/kzero). Removed `oci8jctl` / `oci8jctl.cmd`.
-- Relocate ops assets: `docker/`, `kubernetes/`, `scripts/`.
-- Image release platform fixed to **linux/amd64** (no multi-arch arm64 in v1).
-- Docker image build runs `mvn clean test package`.
-
-### Fixed
-
-- Restore project license to **MIT** (WIP GPL-3 rewrite reverted). Align headers, badge, and `COPYRIGHT_*` docs. Clarify that `classes12.jar` remains under Oracle terms.
-
-### Removed
-
-- `oci8jctl`, `oci8jctl.cmd`, `scripts/generate-build-info.cmd` (Windows ctl helpers).
-
-## [1.2.8] - 2025-12-14
-
-### Added
-
-- Kubernetes readiness probe endpoint: `GET /api/v1/oci8j-connector/ready`.
-
-### Fixed
-
-- Remove dead code in `Oracle8iConfig`.
-
-## [1.2.7] - 2025-12-14
-
-### Added
-
-- Makefile-based Docker build helpers (`build`, `build-arm64`, `build-amd64`) and env-var priority for Oracle settings.
-
-### Fixed
-
-- Oracle 8i connection path and Docker build (`pom.xml` no longer excluded via `.dockerignore`).
-
-## [1.0.0] - 2025-09-28
-
-### Added
-
-- Initial Spring Boot Oracle 8i connector using `classes12.jar`.
-- REST API: `POST /query`, `GET /healthz`, `GET /info`.
-- Optional Basic Authentication; Docker and security hardening; CONTRIBUTING / LICENSE.
+- Gitflow docs in **AGENTS.md**; deprecate/remove `oci8jctl`.
 
 [Unreleased]: https://github.com/hrodrig/oci8j-connector/compare/v1.4.0...HEAD
 [1.4.0]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.1...v1.4.0
