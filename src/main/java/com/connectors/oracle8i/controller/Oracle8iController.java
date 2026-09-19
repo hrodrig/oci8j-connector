@@ -20,7 +20,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/oci8j-connector")
-@CrossOrigin(origins = "*")
 public class Oracle8iController {
 
     private static final Logger logger = LoggerFactory.getLogger(Oracle8iController.class);
