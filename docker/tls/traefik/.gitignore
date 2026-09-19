@@ -1,0 +1,5 @@
+# Ignore local Traefik ACME account/certs (Let's Encrypt)
+acme.json
+traefik.yml
+traefik-le.yml
+dynamic.yml

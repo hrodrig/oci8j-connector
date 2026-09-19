@@ -1,0 +1,19 @@
+# Traefik static config — TLS entrypoint + file provider for local PEMs
+api:
+  disabled: true
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: oci8j-tls
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+entryPoints:
+  websecure:
+    address: ":443"
+
+log:
+  level: INFO

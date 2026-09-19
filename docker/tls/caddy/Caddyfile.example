@@ -1,0 +1,23 @@
+# Caddy reverse proxy for oci8j-connector
+# Copy to Caddyfile and adjust host/ports.
+
+{
+	auto_https off
+}
+
+:8443 {
+	tls /certs/fullchain.pem /certs/privkey.pem
+
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	}
+
+	reverse_proxy oci8j-connector:8080 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		header_up Host {host}
+	}
+}

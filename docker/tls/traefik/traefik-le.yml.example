@@ -1,0 +1,30 @@
+# Traefik v3 static config — Let's Encrypt via HTTP-01
+# Replace you@example.com before first run (Let's Encrypt rate limits apply).
+
+api:
+  disabled: true
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: oci8j-tls
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: you@example.com
+      storage: /acme.json
+      # Staging (uncomment to test without rate limits):
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      httpChallenge:
+        entryPoint: web
+
+log:
+  level: INFO

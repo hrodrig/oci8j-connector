@@ -1,5 +1,6 @@
 # Oracle 8i Connector - Configuration Example
-# Copy this file to config.yaml and update with your actual values
+# Copy this file to config.yaml and update with your actual values.
+# Prefer secrets via env vars in Docker/K8s — never commit real credentials.
 
 server:
   port: 8080
@@ -9,8 +10,7 @@ server:
 spring:
   application:
     name: oracle8i-connector
-  
-  # Logging configuration
+
   logging:
     level:
       com.connectors.oracle8i: DEBUG
@@ -18,20 +18,18 @@ spring:
     pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
-# Oracle 8i configuration
+# Oracle 8i (env: ORACLE_HOST, ORACLE_PORT, ORACLE_SID, ORACLE_USERNAME, ORACLE_PASSWORD)
 oracle8i:
-  host: 1.2.3.4                    # Replace with your Oracle server IP
-  port: 1521                       # Replace with your Oracle port
-  sid: orcl                        # Replace with your Oracle SID
-  username: username               # Replace with your Oracle username
-  password: password               # Replace with your Oracle password
+  host: 1.2.3.4
+  port: 1521
+  sid: orcl
+  username: username
+  password: password
   driver: oracle.jdbc.driver.OracleDriver
-  # Connection timeouts (in milliseconds)
-  connection_timeout: 30000        # Connection timeout (30 seconds)
-  socket_timeout: 60000            # Socket timeout (60 seconds)
-  query_timeout: 120000            # Query execution timeout (120 seconds)
+  connection_timeout: 30000
+  socket_timeout: 60000
+  query_timeout: 120000
 
-# NLS configuration for Oracle 8i
 oracle:
   jdbc:
     timezoneAsRegion: false
@@ -41,15 +39,44 @@ oracle:
         TCP_CONNTIMEOUT: 10000
         TCP_RECVTIMEOUT: 10000
 
-# Application configuration
 app:
   name: Oracle 8i Connector
-  version: 1.0.0
+  version: 1.0.0                   # Display-only; runtime /info uses build VERSION
   description: Oracle 8i connector using classes12.jar
 
-# Basic Authentication (optional)
-# Only enabled if both username and password are provided
+# Basic Auth (env: BASIC_AUTH_ENABLED, BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD)
 basic_auth:
-  enabled: false                       # Set to true to enable Basic Auth
-  username: admin                      # Replace with your desired username
-  password: secretpassword             # Replace with your desired password
+  enabled: false
+  username: admin
+  password: secretpassword
+
+# SQL keyword blocking
+security:
+  # Example: [DROP, TRUNCATE, DELETE]
+  forbidden_keywords: []
+
+# --- SPEC §7 edge / probes (v1.4) ---
+# Env overrides: TRUSTED_PROXIES, ALLOWED_CIDRS, PROBES_PUBLIC, PROBES_ALLOWED_CIDRS
+edge:
+  # Peer CIDRs trusted for X-Forwarded-For / X-Real-IP (empty = ignore forwarded headers)
+  trusted_proxies: ""
+  # API allow-list for /query, /info, etc. (empty = no IP filter)
+  allowed_cidrs: ""
+  # Probes /healthz /ready /readyz — skip Basic Auth when true (default)
+  probes_public: true
+  # Probe-only IP allow-list (empty = no probe IP filter; independent of allowed_cidrs)
+  probes_allowed_cidrs: ""
+
+# --- SPEC §7 hardening (v1.4) ---
+# Env overrides: RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SECONDS, CORS_ORIGINS
+hardening:
+  # Max requests per window per client IP (0 = disabled). Probes exempt.
+  rate_limit_max: 0
+  rate_limit_window_seconds: 60
+  # CORS origins CSV. Empty = * (startup warn if Basic Auth off)
+  cors_origins: ""
+
+# OpenAPI / Swagger (phase 4) — keep false in production
+# Env: OPENAPI_ENABLED
+openapi:
+  enabled: false

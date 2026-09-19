@@ -1,0 +1,84 @@
+# Traefik v3 + Let's Encrypt (HTTP-01)
+# Needs a public DNS name pointing at this host; ports 80 + 443 open.
+#
+#   export ACME_EMAIL=you@example.com
+#   export APP_HOST=oci8j.example.com
+#   cp traefik/traefik-le.yml.example traefik/traefik-le.yml
+#   # Edit ACME email inside traefik-le.yml (or use envsubst)
+#   cp docker-compose.traefik-le.example.yml docker-compose.traefik-le.yml
+#   # Set APP_HOST in labels / compose; edit Oracle secrets
+#   touch traefik/acme.json && chmod 600 traefik/acme.json
+#   docker compose -f docker-compose.traefik-le.yml up -d --build
+#   https://${APP_HOST}/api/v1/oci8j-connector/healthz
+
+networks:
+  oci8j-tls:
+    name: oci8j-tls
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.10.0/24
+
+services:
+  traefik:
+    image: traefik:v3.3
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik-le.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/acme.json:/acme.json
+    networks:
+      - oci8j-tls
+    restart: unless-stopped
+
+  oci8j-connector:
+    image: ${OCI8J_IMAGE:-ghcr.io/hrodrig/oci8j-connector:v1.4.0}
+    # build:
+    #   context: ../..
+    #   dockerfile: docker/Dockerfile
+    environment:
+      - ORACLE_HOST=your-oracle-host
+      - ORACLE_PORT=1521
+      - ORACLE_SID=your-sid
+      - ORACLE_USERNAME=your-username
+      - ORACLE_PASSWORD=your-password
+      - ORACLE_QUERY_TIMEOUT=120000
+      - BASIC_AUTH_ENABLED=true
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=your-secret-password
+      - TRUSTED_PROXIES=172.28.10.0/24
+      - ALLOWED_CIDRS=
+      - PROBES_PUBLIC=true
+      - PROBES_ALLOWED_CIDRS=
+      - RATE_LIMIT_MAX=0
+      - RATE_LIMIT_WINDOW_SECONDS=60
+      - CORS_ORIGINS=
+      - OPENAPI_ENABLED=false
+    expose:
+      - "8080"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=oci8j-tls
+      # Replace oci8j.example.com with your public FQDN (same as APP_HOST)
+      - traefik.http.routers.oci8j.rule=Host(`oci8j.example.com`)
+      - traefik.http.routers.oci8j.entrypoints=websecure
+      - traefik.http.routers.oci8j.tls=true
+      - traefik.http.routers.oci8j.tls.certresolver=letsencrypt
+      - traefik.http.services.oci8j.loadbalancer.server.port=8080
+      # Optional: HTTP → HTTPS redirect router
+      - traefik.http.routers.oci8j-http.rule=Host(`oci8j.example.com`)
+      - traefik.http.routers.oci8j-http.entrypoints=web
+      - traefik.http.routers.oci8j-http.middlewares=oci8j-https-redirect
+      - traefik.http.middlewares.oci8j-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.oci8j-https-redirect.redirectscheme.permanent=true
+    networks:
+      - oci8j-tls
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/oci8j-connector/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

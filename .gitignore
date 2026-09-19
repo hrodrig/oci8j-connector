@@ -21,6 +21,7 @@
 !AGENTS.md
 !SPEC.md
 !VERSION
+!.grype.yaml
 !COPYRIGHT_GUIDE.md
 !COPYRIGHT_HEADER.txt
 !CODE_OF_CONDUCT.md
@@ -47,6 +48,10 @@
 # Include documentation
 !docs/
 !docs/**
+
+# GSD planning artifacts (tracked milestone/roadmap state)
+!.planning/
+!.planning/**
 
 # Include scripts
 !scripts/

@@ -1,0 +1,17 @@
+{
+  "model_profile": "inherit",
+  "commit_docs": true,
+  "workflow": {
+    "research": false,
+    "text_mode": true,
+    "commit_docs": true,
+    "atomic_commits": true
+  },
+  "milestone": {
+    "version": "v1.4.0",
+    "name": "OpenAPI and edge hardening"
+  },
+  "notes": {
+    "commits": "Frequent atomic commits per task during plan/execute; never batch whole phase into one commit without user OK."
+  }
+}

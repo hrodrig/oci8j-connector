@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  -->
 
-# Oracle 8i Connector v1.3.1
+# Oracle 8i Connector v1.4.0
 
-![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)
 ![Java](https://img.shields.io/badge/Java-8-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -17,12 +17,36 @@
 
 ![oci8j-connector — Oracle 8i REST bridge](assets/oci8j-connector-hero.png)
 
-Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Use **`make`** for builds/gates (family workflow); plain `mvn` also works. Published images: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**).
+## The problem
+
+Many organizations still run **Oracle 8i** (or similarly old Oracle instances) that hold critical data. Modern applications — Node, Go, Python, current JDKs, cloud services — **cannot open a reliable JDBC session** to that world:
+
+- The only workable driver is often the historical **`classes12.jar`**, which expects a **Java 8**-era runtime.
+- Current Oracle JDBC drivers and Java 11+ stacks do not replace that path for 8i.
+- Rewriting every consumer to speak thin JDBC + Java 8 is expensive and unsafe to scatter across the estate.
+- Teams still need **HTTP/JSON** access for scripts, integrations, migrations, and controlled ops — without putting a full app server next to every client.
+
+So the gap is: **legacy Oracle 8i on one side, modern HTTP clients on the other**, with no small, deployable bridge in between.
+
+## The solution
+
+**oci8j-connector** is that bridge: a small **Spring Boot 2.7 / Java 8** service that embeds `classes12.jar` and exposes a **REST API** for SQL.
+
+| You need | You get |
+|----------|---------|
+| Talk to Oracle 8i from anywhere that can `curl` | `POST /api/v1/oci8j-connector/query` → JSON |
+| One place that owns the old JDBC stack | Single container / JAR; clients stay modern |
+| Ops-friendly deploy | Docker / Compose / Kubernetes probes (`/healthz`, `/ready` or `/readyz`) |
+| Guardrails | Optional Basic Auth + forbidden SQL keywords |
+
+Published image: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**). Day-to-day: **`make`** (family workflow) or plain `mvn`.
 
 > **WARNING — read before use.** This is a **legacy bridge** for Oracle **8i** on **Java 8**. It is **not** a modern hardened database gateway. Published container images are based on **Eclipse Temurin 8** and will typically report **High** OS/JRE CVEs in scanners (Grype release gate fails on **Critical** only). The bundled `classes12.jar` is **Oracle proprietary** (not MIT). Exposing SQL over HTTP is inherently risky — use only on trusted networks, with auth, keyword blocks, and your own risk acceptance. Full text: [Disclaimer](#disclaimer).
 
 ## Table of contents
 
+- [The problem](#the-problem)
+- [The solution](#the-solution)
 - [Features](#features)
 - [Configuration](#configuration)
   - [Security Note](#security-note)
@@ -112,7 +136,29 @@ export BASIC_AUTH_USERNAME=admin
 export BASIC_AUTH_PASSWORD=secretpassword
 ```
 
-**Note:** If Basic Auth is enabled, all API endpoints will require authentication. The `/healthz` endpoint remains accessible without authentication for monitoring purposes.
+**Note:** If Basic Auth is enabled, API routes (`/query`, `/info`, OpenAPI when on) require credentials. Probes (`/healthz`, `/ready`, `/readyz`) stay public by default (`edge.probes_public: true` / `PROBES_PUBLIC=true`).
+
+### Edge, probes, hardening, OpenAPI (v1.4)
+
+Nested YAML in `config.example.yaml` (env overrides in parentheses):
+
+```yaml
+edge:
+  trusted_proxies: ""          # TRUSTED_PROXIES
+  allowed_cidrs: ""            # ALLOWED_CIDRS
+  probes_public: true          # PROBES_PUBLIC
+  probes_allowed_cidrs: ""     # PROBES_ALLOWED_CIDRS
+
+hardening:
+  rate_limit_max: 0            # RATE_LIMIT_MAX (0 = off)
+  rate_limit_window_seconds: 60
+  cors_origins: ""             # CORS_ORIGINS (empty = *)
+
+openapi:
+  enabled: false               # OPENAPI_ENABLED; also on for profile dev/local
+```
+
+OpenAPI paths when enabled: `/v3/api-docs`, `/swagger-ui.html`. Full contract: [SPEC.md](SPEC.md) §7.
 
 ## Quick Start with Make
 
@@ -141,7 +187,7 @@ Maven-only (no Docker):
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.1.jar
+java -jar target/oracle8i-connector-1.4.0.jar
 ```
 
 ### Release image (CI)
@@ -174,7 +220,7 @@ make docker-scan       # build + Grype (--fail-on critical; High expected on Tem
 make sbom              # Syft SPDX JSON under dist/
 ```
 
-Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.3.1`.
+Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.4.0`.
 
 ### Compose / ops
 
@@ -215,7 +261,7 @@ mvn spring-boot:run
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.1.jar
+java -jar target/oracle8i-connector-1.4.0.jar
 ```
 
 ## API Endpoints
@@ -283,6 +329,8 @@ Executes a SQL query and returns the results in JSON format.
 
 **Readiness Probe** - Verifies the application is ready to serve traffic (includes database connectivity).
 
+Alias: **`GET /api/v1/oci8j-connector/readyz`** (same response).
+
 **Response:**
 
 ```json
@@ -293,7 +341,7 @@ Executes a SQL query and returns the results in JSON format.
 }
 ```
 
-**Note:** For Kubernetes deployments, use `/healthz` for liveness probes and `/ready` for readiness probes.
+**Note:** Kubernetes: `/healthz` for liveness; `/ready` or `/readyz` for readiness.
 
 ### GET /api/v1/oci8j-connector/info
 
@@ -376,6 +424,8 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    cp docker/docker-compose.example.yml docker/docker-compose.yml
    ```
 
+   Default image: `ghcr.io/hrodrig/oci8j-connector:v1.4.0`. Override with `OCI8J_IMAGE=...` (e.g. local `oci8j-connector:1.4.0` after `make docker-build`).
+
 2. **Edit with your credentials:**
 
    ```bash
@@ -383,11 +433,10 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    nano docker/docker-compose.yml
    ```
 
-3. **Build and start the service:**
+3. **Pull and start the service:**
 
    ```bash
-   make docker-build    # Build the Docker image (linux/amd64)
-   make compose-up      # Start the service
+   make compose-up      # docker compose pull && up -d
    ```
 
 #### Quick Start (Using Docker Compose directly)
@@ -412,6 +461,19 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    docker compose up -d
    ```
 
+#### TLS reverse proxy examples
+
+TLS terminates at the edge; the connector stays HTTP on `:8080` inside the compose network. Set `TRUSTED_PROXIES` to the compose subnet so forwarded client IPs are trusted (SPEC §7.2).
+
+| Stack | Path |
+|-------|------|
+| Traefik + Let's Encrypt | `docker/tls/docker-compose.traefik-le.example.yml` |
+| Traefik (file certs) | `docker/tls/docker-compose.traefik.example.yml` |
+| Caddy 2 | `docker/tls/docker-compose.caddy.example.yml` |
+| nginx unprivileged | `docker/tls/docker-compose.nginx.example.yml` |
+
+See **[docker/tls/README.md](docker/tls/README.md)** for certs (`mkcert` / openssl) and `up` commands.
+
 #### Environment Variables
 
 The Docker Compose file supports the following environment variables:
@@ -432,7 +494,15 @@ environment:
   - BASIC_AUTH_ENABLED=false
   - BASIC_AUTH_USERNAME=admin
   - BASIC_AUTH_PASSWORD=your-secret-password
+
+  # SPEC §7 (optional)
+  - TRUSTED_PROXIES=
+  - ALLOWED_CIDRS=
+  - PROBES_PUBLIC=true
+  - OPENAPI_ENABLED=false
 ```
+
+For TLS edge stacks (Traefik / Caddy / nginx), use `TRUSTED_PROXIES=172.28.10.0/24` as in `docker/tls/*`.
 
 #### Health Check
 
@@ -714,7 +784,8 @@ src/
 ├── docker/
 │   ├── Dockerfile
 │   ├── docker-compose.example.yml
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   └── tls/                    # Traefik / Caddy / nginx-unprivileged TLS examples
 ├── kubernetes/
 │   └── k8s-deployment.yaml
 ├── scripts/
