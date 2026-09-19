@@ -466,7 +466,8 @@ TLS terminates at the edge; the connector stays HTTP on `:8080` inside the compo
 
 | Stack | Path |
 |-------|------|
-| Traefik v3 | `docker/tls/docker-compose.traefik.example.yml` |
+| Traefik + Let's Encrypt | `docker/tls/docker-compose.traefik-le.example.yml` |
+| Traefik (file certs) | `docker/tls/docker-compose.traefik.example.yml` |
 | Caddy 2 | `docker/tls/docker-compose.caddy.example.yml` |
 | nginx unprivileged | `docker/tls/docker-compose.nginx.example.yml` |
 

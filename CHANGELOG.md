@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
-- Docker TLS edge examples: Traefik v3, Caddy 2, and `nginxinc/nginx-unprivileged` under `docker/tls/` (app HTTP; `TRUSTED_PROXIES` for XFF).
+- Docker TLS edge examples: Traefik v3 (**Let's Encrypt** + file certs), Caddy 2, and `nginxinc/nginx-unprivileged` under `docker/tls/` (app HTTP; `TRUSTED_PROXIES` for XFF).
 
 ## [1.4.0] - 2026-09-19
 

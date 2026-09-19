@@ -1,2 +1,3 @@
 *.pem
+acme.json
 !README.md
