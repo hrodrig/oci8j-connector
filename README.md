@@ -460,6 +460,18 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    docker compose up -d
    ```
 
+#### TLS reverse proxy examples
+
+TLS terminates at the edge; the connector stays HTTP on `:8080` inside the compose network. Set `TRUSTED_PROXIES` to the compose subnet so forwarded client IPs are trusted (SPEC §7.2).
+
+| Stack | Path |
+|-------|------|
+| Traefik v3 | `docker/tls/docker-compose.traefik.example.yml` |
+| Caddy 2 | `docker/tls/docker-compose.caddy.example.yml` |
+| nginx unprivileged | `docker/tls/docker-compose.nginx.example.yml` |
+
+See **[docker/tls/README.md](docker/tls/README.md)** for certs (`mkcert` / openssl) and `up` commands.
+
 #### Environment Variables
 
 The Docker Compose file supports the following environment variables:
@@ -480,7 +492,15 @@ environment:
   - BASIC_AUTH_ENABLED=false
   - BASIC_AUTH_USERNAME=admin
   - BASIC_AUTH_PASSWORD=your-secret-password
+
+  # SPEC §7 (optional)
+  - TRUSTED_PROXIES=
+  - ALLOWED_CIDRS=
+  - PROBES_PUBLIC=true
+  - OPENAPI_ENABLED=false
 ```
+
+For TLS edge stacks (Traefik / Caddy / nginx), use `TRUSTED_PROXIES=172.28.10.0/24` as in `docker/tls/*`.
 
 #### Health Check
 
@@ -762,7 +782,8 @@ src/
 ├── docker/
 │   ├── Dockerfile
 │   ├── docker-compose.example.yml
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   └── tls/                    # Traefik / Caddy / nginx-unprivileged TLS examples
 ├── kubernetes/
 │   └── k8s-deployment.yaml
 ├── scripts/

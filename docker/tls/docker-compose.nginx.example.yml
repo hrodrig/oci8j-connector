@@ -1,0 +1,61 @@
+# TLS via nginx-unprivileged — copy to docker-compose.nginx.yml and edit secrets.
+# Requires: certs/fullchain.pem + privkey.pem; copy nginx/nginx.conf.example → nginx/nginx.conf
+#
+#   cp nginx/nginx.conf.example nginx/nginx.conf
+#   docker compose -f docker-compose.nginx.yml up -d --build
+#   https://localhost:8443/api/v1/oci8j-connector/healthz
+
+networks:
+  oci8j-tls:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.10.0/24
+
+services:
+  nginx:
+    image: nginxinc/nginx-unprivileged:1.27-alpine
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/certs:ro
+    networks:
+      - oci8j-tls
+    restart: unless-stopped
+    depends_on:
+      - oci8j-connector
+
+  oci8j-connector:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile
+    environment:
+      - ORACLE_HOST=your-oracle-host
+      - ORACLE_PORT=1521
+      - ORACLE_SID=your-sid
+      - ORACLE_USERNAME=your-username
+      - ORACLE_PASSWORD=your-password
+      - ORACLE_QUERY_TIMEOUT=120000
+      - BASIC_AUTH_ENABLED=false
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=your-secret-password
+      - TRUSTED_PROXIES=172.28.10.0/24
+      - ALLOWED_CIDRS=
+      - PROBES_PUBLIC=true
+      - PROBES_ALLOWED_CIDRS=
+      - RATE_LIMIT_MAX=0
+      - RATE_LIMIT_WINDOW_SECONDS=60
+      - CORS_ORIGINS=
+      - OPENAPI_ENABLED=false
+    expose:
+      - "8080"
+    networks:
+      - oci8j-tls
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/oci8j-connector/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
