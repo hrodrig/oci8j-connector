@@ -1,6 +1,7 @@
 package com.connectors.oracle8i.security;
 
 import com.connectors.oracle8i.config.BasicAuthConfig;
+import com.connectors.oracle8i.config.EdgeAccessConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * Basic Authentication Filter
- * Only active when BasicAuth is properly configured
+ * Basic Authentication Filter.
+ * Probes skip auth when PROBES_PUBLIC=true (default). SPEC §7.2.1.
  */
 @Component
 public class BasicAuthFilter implements Filter {
@@ -21,11 +22,22 @@ public class BasicAuthFilter implements Filter {
     @Autowired
     private BasicAuthConfig basicAuthConfig;
 
+    @Autowired
+    private EdgeAccessConfig edgeAccessConfig;
+
+    // package-visible for unit tests
+    void setBasicAuthConfig(BasicAuthConfig basicAuthConfig) {
+        this.basicAuthConfig = basicAuthConfig;
+    }
+
+    void setEdgeAccessConfig(EdgeAccessConfig edgeAccessConfig) {
+        this.edgeAccessConfig = edgeAccessConfig;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        // Skip authentication if not enabled
         if (!basicAuthConfig.isEnabled()) {
             chain.doFilter(request, response);
             return;
@@ -34,12 +46,13 @@ public class BasicAuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Skip authentication for probes, root discovery, and error JSON
         String requestURI = httpRequest.getRequestURI();
-        if ("/".equals(requestURI)
-                || "/error".equals(requestURI)
-                || requestURI.endsWith("/healthz")
-                || requestURI.endsWith("/ready")) {
+        if ("/".equals(requestURI) || "/error".equals(requestURI)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (ProbePaths.isProbe(requestURI) && edgeAccessConfig.isProbesPublic()) {
             chain.doFilter(request, response);
             return;
         }
@@ -64,7 +77,7 @@ public class BasicAuthFilter implements Filter {
             String username = parts[0];
             String password = parts[1];
 
-            if (basicAuthConfig.getUsername().equals(username) && 
+            if (basicAuthConfig.getUsername().equals(username) &&
                 basicAuthConfig.getPassword().equals(password)) {
                 chain.doFilter(request, response);
             } else {

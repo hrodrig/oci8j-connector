@@ -20,7 +20,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/oci8j-connector")
-@CrossOrigin(origins = "*")
 public class Oracle8iController {
 
     private static final Logger logger = LoggerFactory.getLogger(Oracle8iController.class);
@@ -98,6 +97,19 @@ public class Oracle8iController {
      */
     @GetMapping("/ready")
     public ResponseEntity<Map<String, Object>> ready() {
+        return readinessBody();
+    }
+
+    /**
+     * Alias of {@link #ready()} (k8s-style name). SPEC §7.2.1.
+     * GET /api/v1/oci8j-connector/readyz
+     */
+    @GetMapping("/readyz")
+    public ResponseEntity<Map<String, Object>> readyz() {
+        return readinessBody();
+    }
+
+    private ResponseEntity<Map<String, Object>> readinessBody() {
         boolean dbConnected = oracle8iService.testConnection();
 
         Map<String, Object> status = new HashMap<>();
@@ -125,6 +137,7 @@ public class Oracle8iController {
         endpoints.put("query", "POST /api/v1/oci8j-connector/query");
         endpoints.put("healthz", "GET /api/v1/oci8j-connector/healthz");
         endpoints.put("ready", "GET /api/v1/oci8j-connector/ready");
+        endpoints.put("readyz", "GET /api/v1/oci8j-connector/readyz");
         endpoints.put("info", "GET /api/v1/oci8j-connector/info");
         
         Map<String, Object> info = new HashMap<>();

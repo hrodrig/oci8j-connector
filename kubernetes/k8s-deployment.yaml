@@ -44,7 +44,7 @@ spec:
         # Should return 200 OK only when database is connected
         readinessProbe:
           httpGet:
-            path: /api/v1/oci8j-connector/ready
+            path: /api/v1/oci8j-connector/readyz
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 5

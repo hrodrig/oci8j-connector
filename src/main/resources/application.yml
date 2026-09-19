@@ -16,3 +16,11 @@ basic_auth:
   enabled: false
   username: ${BASIC_AUTH_USERNAME:}
   password: ${BASIC_AUTH_PASSWORD:}
+
+# Edge / probes / hardening / openapi — nested keys in config.yaml (SPEC §7)
+# springdoc defaults off; OpenApiEnvironmentPostProcessor enables for dev/local or openapi.enabled
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
