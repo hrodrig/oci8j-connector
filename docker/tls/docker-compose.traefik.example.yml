@@ -30,9 +30,7 @@ services:
     restart: unless-stopped
 
   oci8j-connector:
-    build:
-      context: ../..
-      dockerfile: docker/Dockerfile
+    image: ${OCI8J_IMAGE:-ghcr.io/hrodrig/oci8j-connector:v1.4.0}
     environment:
       - ORACLE_HOST=your-oracle-host
       - ORACLE_PORT=1521

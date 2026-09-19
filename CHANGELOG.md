@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
-- Docker TLS edge examples: Traefik v3 (**Let's Encrypt** + file certs), Caddy 2, and `nginxinc/nginx-unprivileged` under `docker/tls/` (app HTTP; `TRUSTED_PROXIES` for XFF).
+- Compose examples pull **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** by default (`OCI8J_IMAGE` override); `make server` / `compose-up` run `docker compose pull` instead of `--build`.
 
 ## [1.4.0] - 2026-09-19
 

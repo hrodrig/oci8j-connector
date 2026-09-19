@@ -424,6 +424,8 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    cp docker/docker-compose.example.yml docker/docker-compose.yml
    ```
 
+   Default image: `ghcr.io/hrodrig/oci8j-connector:v1.4.0`. Override with `OCI8J_IMAGE=...` (e.g. local `oci8j-connector:1.4.0` after `make docker-build`).
+
 2. **Edit with your credentials:**
 
    ```bash
@@ -431,11 +433,10 @@ curl http://localhost:8080/api/v1/oci8j-connector/healthz
    nano docker/docker-compose.yml
    ```
 
-3. **Build and start the service:**
+3. **Pull and start the service:**
 
    ```bash
-   make docker-build    # Build the Docker image (linux/amd64)
-   make compose-up      # Start the service
+   make compose-up      # docker compose pull && up -d
    ```
 
 #### Quick Start (Using Docker Compose directly)
