@@ -68,6 +68,13 @@
             <systemPath>${project.basedir}/lib/classes12.jar</systemPath>
         </dependency>
 
+        <!-- Springdoc OpenAPI (Boot 2.7 / Java 8) — gated by openapi.enabled -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
         <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
