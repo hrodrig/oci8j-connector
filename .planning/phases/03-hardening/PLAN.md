@@ -5,8 +5,12 @@
 
 ## Success criteria
 
-- [ ] Per resolved-IP rate limit; probes exempt; 429 JSON
-- [ ] CORS_ORIGINS allow-list; empty = `*` + warn if Basic Auth off
-- [ ] Security headers on responses
-- [ ] SPEC §7.3/§7.4 env names frozen
-- [ ] Tests + `make test` green
+- [x] Per resolved-IP rate limit; probes exempt; 429 JSON
+- [x] CORS_ORIGINS allow-list; empty = `*` + warn if Basic Auth off
+- [x] Security headers on responses
+- [x] SPEC §7.3/§7.4 env names frozen
+- [x] Tests + `make test` green (24 tests)
+
+## Status
+
+**Complete** 2026-09-19 — rate limit, CORS filter, security headers.

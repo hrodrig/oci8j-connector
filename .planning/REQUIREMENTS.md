@@ -32,9 +32,9 @@
 
 ### Hardening (C)
 
-- [ ] **HARD-01**: Per resolved-client-IP rate limit; env names frozen in SPEC; **429** minimal JSON
-- [ ] **HARD-02**: `CORS_ORIGINS` allow-list; empty = `*` with startup warn when Basic Auth off (freeze at implement)
-- [ ] **HARD-03**: Security headers on all responses: `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, conservative `Permissions-Policy`
+- [x] **HARD-01**: Per resolved-client-IP rate limit; env names frozen in SPEC; **429** minimal JSON
+- [x] **HARD-02**: `CORS_ORIGINS` allow-list; empty = `*` with startup warn when Basic Auth off (freeze at implement)
+- [x] **HARD-03**: Security headers on all responses: `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, conservative `Permissions-Policy`
 
 ### Docs & release hygiene
 
@@ -62,7 +62,7 @@
 |-------------|-------|--------|
 | EDGE-01..05 | 1 | Done |
 | PROB-01..05 | 2 | Done |
-| HARD-01..03 | 3 | Pending |
+| HARD-01..03 | 3 | Done |
 | OAPI-01..05 | 4 | Pending |
 | DOCS-01..02, TEST-01 | 5 | Pending |
 

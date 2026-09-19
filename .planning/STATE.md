@@ -4,19 +4,19 @@ milestone_name: OpenAPI and edge hardening
 status: executing
 progress:
   phases_total: 5
-  phases_done: 2
-  percent: 40
-last_activity: 2026-09-19 — Phase 2 done (20 tests); next phase 3 hardening
+  phases_done: 3
+  percent: 60
+last_activity: 2026-09-19 — Phase 3 done (24 tests); next OpenAPI
 ---
 
 # STATE
 
 ## Current Position
 
-Phase: 3 — Rate limit / CORS / headers (next)
-Plan: Phase 2 complete
-Status: Phase 2 done
-Last activity: 2026-09-19 — PROB-* shipped; `make test` 20/20
+Phase: 4 — OpenAPI gated (next)
+Plan: Phase 3 complete
+Status: Phase 3 done
+Last activity: 2026-09-19 — HARD-* shipped; `make test` 24/24
 
 ## Process
 
@@ -26,8 +26,8 @@ Last activity: 2026-09-19 — PROB-* shipped; `make test` 20/20
 
 ## Accumulated Context
 
-- Phase 1: edge identity filters.
-- Phase 2: `/readyz`, `PROBES_PUBLIC`, `PROBES_ALLOWED_CIDRS`.
+- Phases 1–3: edge identity, probes, rate/CORS/headers.
+- Config: nested `edge.*` / `hardening.*` / `openapi.*` in YAML; env overrides.
 
 ## Blockers
 
@@ -35,8 +35,7 @@ Last activity: 2026-09-19 — PROB-* shipped; `make test` 20/20
 
 ## Todos
 
-- [x] Phase 1 EDGE-*
-- [x] Phase 2 PROB-*
-- [ ] Phase 3 HARD-*
-- [ ] Phases 4–5
+- [x] Phase 1–3
+- [ ] Phase 4 OpenAPI
+- [ ] Phase 5 docs/tests/release prep
 - [ ] Local gates green before PR
