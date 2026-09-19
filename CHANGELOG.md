@@ -7,18 +7,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Documentation
-
-- README opens with **problem → solution** (Oracle 8i / `classes12` gap vs REST bridge).
-- SPEC §7: target contract **A/B/C** (OpenAPI gate, trusted proxies + IP allow-list, rate limit / CORS / security headers) for **v1.4.x**; GSD milestone for implementation. Fix `/ready` auth note to match public filter behavior.
-- SPEC §7.2.1: probes `/healthz`, `/ready`, `/readyz` — public by default; `PROBES_PUBLIC` + optional `PROBES_ALLOWED_CIDRS` (separate from API `ALLOWED_CIDRS`).
+## [1.4.0] - 2026-09-19
 
 ### Added
 
-- Edge identity (phase 1): `TRUSTED_PROXIES` + resolved client IP; `ALLOWED_CIDRS` API allow-list with **403** JSON; probes exempt.
-- Probe access (phase 2): `/readyz`; `PROBES_PUBLIC` (default true); `PROBES_ALLOWED_CIDRS` independent of API list.
-- Hardening (phase 3): `RATE_LIMIT_MAX` / window, `CORS_ORIGINS` via CorsFilter, baseline security headers.
-- OpenAPI (phase 4): springdoc-openapi-ui 1.7 gated (`openapi.enabled` / `dev`|`local`); paths `/v3/api-docs`, `/swagger-ui.html`.
+- Edge identity: `edge.trusted_proxies` / `TRUSTED_PROXIES` + resolved client IP; `edge.allowed_cidrs` / `ALLOWED_CIDRS` API allow-list with **403** JSON.
+- Probe access: `/readyz` alias; `edge.probes_public` / `PROBES_PUBLIC` (default true); `edge.probes_allowed_cidrs` independent of API list.
+- Hardening: `hardening.rate_limit_max` / `RATE_LIMIT_MAX` (0=off), window seconds, `hardening.cors_origins` / `CORS_ORIGINS`, baseline security headers.
+- OpenAPI: springdoc-openapi-ui **1.7** gated (`openapi.enabled` / `OPENAPI_ENABLED` or profile `dev`|`local`); paths `/v3/api-docs`, `/swagger-ui.html`.
+- Nested YAML under `edge` / `hardening` / `openapi` in `config.example.yaml` (env placeholders in packaged `config.yaml`).
+
+### Documentation
+
+- README opens with **problem → solution** (Oracle 8i / `classes12` gap vs REST bridge).
+- SPEC §7 A/B/C frozen and marked shipped for **v1.4.0**; README env/YAML section for edge/probes/hardening/OpenAPI.
+- Compose example documents §7 environment variables (defaults off / public probes).
 
 ## [1.3.1] - 2026-09-19
 
@@ -86,7 +89,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - REST API: `POST /query`, `GET /healthz`, `GET /info`.
 - Optional Basic Authentication; Docker and security hardening; CONTRIBUTING / LICENSE.
 
-[Unreleased]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/hrodrig/oci8j-connector/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/hrodrig/oci8j-connector/compare/v1.2.8...v1.3.0
 [1.2.8]: https://github.com/hrodrig/oci8j-connector/compare/v1.2.7...v1.2.8

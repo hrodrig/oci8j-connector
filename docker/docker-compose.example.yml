@@ -18,6 +18,17 @@ services:
       - BASIC_AUTH_ENABLED=false
       - BASIC_AUTH_USERNAME=admin
       - BASIC_AUTH_PASSWORD=your-secret-password
+      # SPEC §7 edge / probes (optional; empty = defaults)
+      - TRUSTED_PROXIES=
+      - ALLOWED_CIDRS=
+      - PROBES_PUBLIC=true
+      - PROBES_ALLOWED_CIDRS=
+      # SPEC §7 hardening (optional; RATE_LIMIT_MAX=0 disables)
+      - RATE_LIMIT_MAX=0
+      - RATE_LIMIT_WINDOW_SECONDS=60
+      - CORS_ORIGINS=
+      # OpenAPI / Swagger (keep false in production)
+      - OPENAPI_ENABLED=false
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/oci8j-connector/healthz"]

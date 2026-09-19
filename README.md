@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  -->
 
-# Oracle 8i Connector v1.3.1
+# Oracle 8i Connector v1.4.0
 
-![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)
 ![Java](https://img.shields.io/badge/Java-8-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -187,7 +187,7 @@ Maven-only (no Docker):
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.1.jar
+java -jar target/oracle8i-connector-1.4.0.jar
 ```
 
 ### Release image (CI)
@@ -220,7 +220,7 @@ make docker-scan       # build + Grype (--fail-on critical; High expected on Tem
 make sbom              # Syft SPDX JSON under dist/
 ```
 
-Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.3.1`.
+Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.4.0`.
 
 ### Compose / ops
 
@@ -261,7 +261,7 @@ mvn spring-boot:run
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.1.jar
+java -jar target/oracle8i-connector-1.4.0.jar
 ```
 
 ## API Endpoints

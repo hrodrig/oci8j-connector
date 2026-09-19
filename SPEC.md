@@ -1,6 +1,6 @@
 # Spec — HTTP API and ops contract
 
-Normative operator contracts for **oci8j-connector** as of **v1.3.1**.  
+Normative operator contracts for **oci8j-connector** as of **v1.4.0**.  
 Narrative install/env: **[README.md](README.md)**. Agent / release rules: **[AGENTS.md](AGENTS.md)**.
 
 > **Stability:** Documented routes, JSON fields, and environment variable names are **stable** within the 1.x line — no rename/removal without a SemVer major bump. **Additive** fields, routes, and env vars are allowed in minor releases.
@@ -46,7 +46,7 @@ CORS: `hardening.cors_origins` / `CORS_ORIGINS` (empty = `*`). See §7.3.
 
 When Basic Auth is enabled, **`/`** stays public; probes follow `PROBES_PUBLIC`; other API and OpenAPI routes require credentials.
 
-§7 A/B/C implemented on the **v1.4.0** line (this branch); released **v1.3.1** did not ship these gates.
+§7 A/B/C shipped in **v1.4.0** (additive vs **v1.3.1**).
 
 ---
 
@@ -238,4 +238,4 @@ Paths: existing **`/api/v1/oci8j-connector/healthz`** and **`/ready`**; add **`/
 | `RATE_LIMIT_WINDOW_SECONDS` | C | Window length (default **60**) |
 | `CORS_ORIGINS` | C | Allowed browser origins CSV; empty = `*` |
 
-Until **1.4.0** is tagged, released binaries remain **v1.3.1** behavior for operators who have not upgraded.
+Operators on **v1.3.1** lack §7 gates until they upgrade to **v1.4.0+**.

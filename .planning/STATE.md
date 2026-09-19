@@ -5,28 +5,19 @@ status: ready_for_pr
 progress:
   phases_total: 5
   phases_done: 5
-  percent: 95
-last_activity: 2026-09-19 — Feature complete; lint+test green; VERSION bump deferred
+  percent: 100
+last_activity: 2026-09-19 — VERSION 1.4.0 bump committed; push pending
 ---
 
 # STATE
 
 ## Current Position
 
-Phase: 5 complete (docs) — **VERSION bump deferred** (DOCS-02)
-Status: Ready for PR after push
-Last activity: 2026-09-19 — `make lint` + `make test` (29) green
+Status: VERSION **1.4.0** bumped; ready to push + PR → develop  
+Last activity: 2026-09-19 — bump commit + compose §7 env (was missing)
 
-## Process
+## Remaining
 
-- **PR:** next step when you OK push + `gh pr create`
-- **VERSION 1.4.0 bump:** dedicated commit/PR after merge or as agreed (AGENTS)
-- **release-check / tag:** only with explicit OK
-
-## Todos
-
-- [x] Phases 1–4 code
-- [x] Phase 5 README/SPEC (except VERSION)
-- [x] `make lint` + `make test`
-- [ ] Push branch + PR → develop
-- [ ] VERSION bump 1.4.0 (separate)
+- [ ] Push + PR → develop
+- [ ] `make release-check` before tag (explicit OK)
+- [ ] Tag `v1.4.0` on main after develop→main (explicit OK)

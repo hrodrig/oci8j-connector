@@ -39,7 +39,7 @@
 ### Docs & release hygiene
 
 - [x] **DOCS-01**: SPEC §4/§7 env table matches shipped names; README + compose examples updated
-- [ ] **DOCS-02**: CHANGELOG Unreleased → 1.4.0; VERSION/pom/Dockerfile/README badges synced on bump PR
+- [x] **DOCS-02**: CHANGELOG Unreleased → 1.4.0; VERSION/pom/Dockerfile/README badges synced on bump PR
 - [x] **TEST-01**: Automated tests for 403/429, probe defaults, trusted-proxy spoof rejection
 
 ## Deferred (post-1.4.0)
