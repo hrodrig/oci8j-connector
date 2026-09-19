@@ -1,5 +1,6 @@
 # Oracle 8i Connector - Configuration Example
-# Copy this file to config.yaml and update with your actual values
+# Copy this file to config.yaml and update with your actual values.
+# Prefer secrets via env vars in Docker/K8s (see comments) — never commit real credentials.
 
 server:
   port: 8080
@@ -20,11 +21,11 @@ spring:
 
 # Oracle 8i configuration
 oracle8i:
-  host: 1.2.3.4                    # Replace with your Oracle server IP
-  port: 1521                       # Replace with your Oracle port
-  sid: orcl                        # Replace with your Oracle SID
-  username: username               # Replace with your Oracle username
-  password: password               # Replace with your Oracle password
+  host: 1.2.3.4                    # Replace with your Oracle server IP (or ORACLE_HOST)
+  port: 1521                       # Replace with your Oracle port (or ORACLE_PORT)
+  sid: orcl                        # Replace with your Oracle SID (or ORACLE_SID)
+  username: username               # Replace with your Oracle username (or ORACLE_USERNAME)
+  password: password               # Replace with your Oracle password (or ORACLE_PASSWORD)
   driver: oracle.jdbc.driver.OracleDriver
   # Connection timeouts (in milliseconds)
   connection_timeout: 30000        # Connection timeout (30 seconds)
@@ -44,12 +45,38 @@ oracle:
 # Application configuration
 app:
   name: Oracle 8i Connector
-  version: 1.0.0
+  version: 1.0.0                   # Display-only; runtime /info uses build VERSION
   description: Oracle 8i connector using classes12.jar
 
 # Basic Authentication (optional)
 # Only enabled if both username and password are provided
+# Env: BASIC_AUTH_ENABLED / BASIC_AUTH_USERNAME / BASIC_AUTH_PASSWORD
 basic_auth:
   enabled: false                       # Set to true to enable Basic Auth
   username: admin                      # Replace with your desired username
   password: secretpassword             # Replace with your desired password
+
+# Query keyword blocking (optional)
+security:
+  # Empty = no keyword block. Example: [DROP, TRUNCATE, DELETE]
+  forbidden_keywords: []
+
+# --- SPEC §7 edge / probes / hardening (v1.4) ---
+# Keys match env names used by the app (@Value). Empty = feature off / defaults.
+# Prefer setting them as environment variables in compose/K8s.
+
+# Peer CIDRs trusted for X-Forwarded-For / X-Real-IP (empty = ignore forwarded headers)
+TRUSTED_PROXIES: ""
+# API allow-list for /query, /info, etc. (empty = no IP filter). Probes use PROBES_ALLOWED_CIDRS.
+ALLOWED_CIDRS: ""
+# Probes /healthz /ready /readyz: public by default (skip Basic Auth when true)
+PROBES_PUBLIC: true
+# Optional IP allow-list for probes only (empty = no probe IP filter)
+PROBES_ALLOWED_CIDRS: ""
+# Rate limit per resolved client IP (0 = disabled). Probes exempt.
+RATE_LIMIT_MAX: 0
+RATE_LIMIT_WINDOW_SECONDS: 60
+# CORS origins CSV. Empty = * (startup warn if Basic Auth off)
+CORS_ORIGINS: ""
+# OpenAPI / Swagger (phase 4) — reserved; keep false in production examples
+OPENAPI_ENABLED: false

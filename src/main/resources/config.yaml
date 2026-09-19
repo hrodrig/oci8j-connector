@@ -54,3 +54,13 @@ security:
   # List of forbidden keywords in SQL queries (empty by default)
   # Configure according to your security requirements
   forbidden_keywords: []
+
+# SPEC §7 (v1.4) — also overridable via env with the same names
+TRUSTED_PROXIES: ${TRUSTED_PROXIES:}
+ALLOWED_CIDRS: ${ALLOWED_CIDRS:}
+PROBES_PUBLIC: ${PROBES_PUBLIC:true}
+PROBES_ALLOWED_CIDRS: ${PROBES_ALLOWED_CIDRS:}
+RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:0}
+RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS:60}
+CORS_ORIGINS: ${CORS_ORIGINS:}
+OPENAPI_ENABLED: ${OPENAPI_ENABLED:false}
