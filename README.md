@@ -17,12 +17,36 @@
 
 ![oci8j-connector — Oracle 8i REST bridge](assets/oci8j-connector-hero.png)
 
-Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Use **`make`** for builds/gates (family workflow); plain `mvn` also works. Published images: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**).
+## The problem
+
+Many organizations still run **Oracle 8i** (or similarly old Oracle instances) that hold critical data. Modern applications — Node, Go, Python, current JDKs, cloud services — **cannot open a reliable JDBC session** to that world:
+
+- The only workable driver is often the historical **`classes12.jar`**, which expects a **Java 8**-era runtime.
+- Current Oracle JDBC drivers and Java 11+ stacks do not replace that path for 8i.
+- Rewriting every consumer to speak thin JDBC + Java 8 is expensive and unsafe to scatter across the estate.
+- Teams still need **HTTP/JSON** access for scripts, integrations, migrations, and controlled ops — without putting a full app server next to every client.
+
+So the gap is: **legacy Oracle 8i on one side, modern HTTP clients on the other**, with no small, deployable bridge in between.
+
+## The solution
+
+**oci8j-connector** is that bridge: a small **Spring Boot 2.7 / Java 8** service that embeds `classes12.jar` and exposes a **REST API** for SQL.
+
+| You need | You get |
+|----------|---------|
+| Talk to Oracle 8i from anywhere that can `curl` | `POST /api/v1/oci8j-connector/query` → JSON |
+| One place that owns the old JDBC stack | Single container / JAR; clients stay modern |
+| Ops-friendly deploy | Docker / Compose / Kubernetes probes (`/healthz`, `/ready`) |
+| Guardrails | Optional Basic Auth + forbidden SQL keywords |
+
+Published image: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**). Day-to-day: **`make`** (family workflow) or plain `mvn`.
 
 > **WARNING — read before use.** This is a **legacy bridge** for Oracle **8i** on **Java 8**. It is **not** a modern hardened database gateway. Published container images are based on **Eclipse Temurin 8** and will typically report **High** OS/JRE CVEs in scanners (Grype release gate fails on **Critical** only). The bundled `classes12.jar` is **Oracle proprietary** (not MIT). Exposing SQL over HTTP is inherently risky — use only on trusted networks, with auth, keyword blocks, and your own risk acceptance. Full text: [Disclaimer](#disclaimer).
 
 ## Table of contents
 
+- [The problem](#the-problem)
+- [The solution](#the-solution)
 - [Features](#features)
 - [Configuration](#configuration)
   - [Security Note](#security-note)
