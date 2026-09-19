@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Documentation
+
+- README opens with **problem → solution** (Oracle 8i / `classes12` gap vs REST bridge).
+
 ## [1.3.1] - 2026-09-19
 
 ### Fixed
