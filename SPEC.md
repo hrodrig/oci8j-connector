@@ -181,9 +181,10 @@ Scope locked by operator decision **A + B + C**:
 | Stack | springdoc-openapi compatible with Spring Boot **2.7** / Java **8** |
 | Default | **Off** when `SPRING_PROFILES_ACTIVE` contains `prod` **or** when unset and not explicitly enabled |
 | Enable | `OPENAPI_ENABLED=true` **or** profile `dev` / `local` (exact profile names frozen at implement time; document in §4 when shipped) |
-| Paths | OpenAPI JSON + Swagger UI under fixed paths (e.g. `/v3/api-docs`, `/swagger-ui.html`) — freeze paths in this section when implemented |
+| Paths | OpenAPI JSON **`/v3/api-docs`** + Swagger UI **`/swagger-ui.html`** (springdoc 1.7 defaults) |
 | Auth | Same Basic Auth gate as `/info` when Basic Auth is enabled; if OpenAPI is on and Basic Auth is off, log a **startup warn** |
 | Prod safety | OpenAPI **must not** be on by default in production images/compose examples |
+| Gate | `OpenApiEnvironmentPostProcessor`: off by default; on if `openapi.enabled`/`OPENAPI_ENABLED=true` or profile `dev`/`local`; `prod` off unless forced true |
 
 ### 7.2 Client IP, trusted proxies, allow-list (B)
 
