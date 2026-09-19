@@ -1,6 +1,6 @@
 # Spec — HTTP API and ops contract
 
-Normative operator contracts for **oci8j-connector** as of **v1.3.0**.  
+Normative operator contracts for **oci8j-connector** as of **v1.3.1**.  
 Narrative install/env: **[README.md](README.md)**. Agent / release rules: **[AGENTS.md](AGENTS.md)**.
 
 > **Stability:** Documented routes, JSON fields, and environment variable names are **stable** within the 1.x line — no rename/removal without a SemVer major bump. **Additive** fields, routes, and env vars are allowed in minor releases.
@@ -133,7 +133,10 @@ Sensitive values must come from env / secrets managers — never commit real com
 | GHCR image | `ghcr.io/hrodrig/oci8j-connector:v<VERSION>` and `:latest` — **linux/amd64 only** (Release workflow on tag `v*`) |
 | Fat JAR | `target/oracle8i-connector-<VERSION>.jar` (attached to GitHub Release) |
 | SBOM | Syft SPDX JSON under `dist/` (attached to GitHub Release) |
-| Quality gate | `make release-check` = lint + test + package + docker-scan (Grype) |
+| Quality gate | `make release-check` = lint + test + package + docker-scan (Grype `--fail-on critical`) |
+
+**Note:** Runtime image is **Eclipse Temurin 8** (required for `classes12.jar` / Oracle 8i). Java 8 base images typically report **High** OS/JRE CVEs; the release gate fails only on **Critical**. Override locally: `make docker-scan GRYPE_FAIL_ON=high`.
+
 
 Git flow and bump checklist: **[AGENTS.md](AGENTS.md)**.
 

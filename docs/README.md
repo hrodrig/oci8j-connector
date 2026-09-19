@@ -12,5 +12,6 @@
 | [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Community norms |
 | [Makefile](../Makefile) | Build, lint, Docker, release-check |
 | [sample-response.json](sample-response.json) | Anonymized sample `POST /query` response (`user_tables`-style) |
+| [oci8j-connector-hero.png](../assets/oci8j-connector-hero.png) | README hero poster |
 
 Operator examples live under `docker/` and `kubernetes/`. CI: `.github/workflows/ci.yml` / `release.yml`.

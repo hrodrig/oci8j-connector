@@ -7,6 +7,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-19
+
+### Fixed
+
+- Release Grype gate: `--fail-on critical` (not `high`). Temurin 8 / Java 8 images cannot stay High-clean; scan still runs and reports High.
+
+### Documentation
+
+- Explicit README disclaimer: Java 8 / Temurin CVE posture, Oracle `classes12.jar` license, SQL-over-HTTP risk, and operator responsibilities (plus top-of-README warning callout).
+- README hero image: `assets/oci8j-connector-hero.png`.
+- README table of contents.
+
 ## [1.3.0] - 2026-09-18
 
 ### Added
@@ -61,7 +73,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - REST API: `POST /query`, `GET /healthz`, `GET /info`.
 - Optional Basic Authentication; Docker and security hardening; CONTRIBUTING / LICENSE.
 
-[Unreleased]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/hrodrig/oci8j-connector/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/hrodrig/oci8j-connector/compare/v1.2.8...v1.3.0
 [1.2.8]: https://github.com/hrodrig/oci8j-connector/compare/v1.2.7...v1.2.8
 [1.2.7]: https://github.com/hrodrig/oci8j-connector/compare/v1.0.0...v1.2.7

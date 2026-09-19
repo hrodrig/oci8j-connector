@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  -->
 
-# Oracle 8i Connector v1.3.0
+# Oracle 8i Connector v1.3.1
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)
 ![Java](https://img.shields.io/badge/Java-8-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -15,7 +15,34 @@
 
 **Spec:** [SPEC.md](SPEC.md) · **Agents:** [AGENTS.md](AGENTS.md) · **Version:** [VERSION](VERSION) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Docs index:** [docs/README.md](docs/README.md)
 
+![oci8j-connector — Oracle 8i REST bridge](assets/oci8j-connector-hero.png)
+
 Spring Boot application to connect to Oracle 8i using the `classes12.jar` driver. Allows executing SQL queries through a REST API. Use **`make`** for builds/gates (family workflow); plain `mvn` also works. Published images: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**).
+
+> **WARNING — read before use.** This is a **legacy bridge** for Oracle **8i** on **Java 8**. It is **not** a modern hardened database gateway. Published container images are based on **Eclipse Temurin 8** and will typically report **High** OS/JRE CVEs in scanners (Grype release gate fails on **Critical** only). The bundled `classes12.jar` is **Oracle proprietary** (not MIT). Exposing SQL over HTTP is inherently risky — use only on trusted networks, with auth, keyword blocks, and your own risk acceptance. Full text: [Disclaimer](#disclaimer).
+
+## Table of contents
+
+- [Features](#features)
+- [Configuration](#configuration)
+  - [Security Note](#security-note)
+  - [config.yaml file](#configyaml-file)
+  - [Environment Variables](#environment-variables)
+  - [Basic Authentication (Optional)](#basic-authentication-optional)
+- [Quick Start with Make](#quick-start-with-make)
+  - [Release image (CI)](#release-image-ci)
+- [Using Make](#using-make)
+- [Compilation and Execution (Maven)](#compilation-and-execution-maven)
+- [API Endpoints](#api-endpoints)
+- [Usage Examples](#usage-examples)
+- [Docker](#docker)
+- [Security](#security)
+  - [Query Security Configuration](#query-security-configuration)
+  - [General Security Notes](#general-security-notes)
+- [Requirements](#requirements)
+- [Project Structure](#project-structure)
+- [Disclaimer](#disclaimer)
+- [License](#license)
 
 ## Features
 
@@ -114,7 +141,7 @@ Maven-only (no Docker):
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.0.jar
+java -jar target/oracle8i-connector-1.3.1.jar
 ```
 
 ### Release image (CI)
@@ -143,11 +170,11 @@ make release-check     # lint + test + package + docker-scan (needs Docker)
 
 ```bash
 make docker-build      # oci8j-connector:<VERSION> (linux/amd64)
-make docker-scan       # build + Grype (--fail-on high)
+make docker-scan       # build + Grype (--fail-on critical; High expected on Temurin 8)
 make sbom              # Syft SPDX JSON under dist/
 ```
 
-Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.3.0`.
+Images are tagged `oci8j-connector:<VERSION>` and `oci8j-connector:latest` locally. GHCR uses the `v` prefix: `ghcr.io/hrodrig/oci8j-connector:v1.3.1`.
 
 ### Compose / ops
 
@@ -188,7 +215,7 @@ mvn spring-boot:run
 
 ```bash
 mvn clean package
-java -jar target/oracle8i-connector-1.3.0.jar
+java -jar target/oracle8i-connector-1.3.1.jar
 ```
 
 ## API Endpoints
@@ -697,6 +724,8 @@ src/
 │   └── test-security.sh
 ├── docs/
 │   └── README.md
+├── assets/
+│   └── oci8j-connector-hero.png
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml
@@ -715,6 +744,34 @@ src/
 
 ## Disclaimer
 
+**Read this section in full before building, deploying, or exposing this software.**
+
+### Nature of this project
+
+- **oci8j-connector** exists to talk to **legacy Oracle 8i** using the historical **`classes12.jar`** JDBC driver.
+- That forces a **Java 8** runtime (and typically **Spring Boot 2.7**). Java 8 is **end-of-life**. You should expect ongoing security findings against the JDK, base OS packages, and transitive dependencies.
+- This is a **compatibility / migration / lab / controlled-ops** tool — **not** a general-purpose, internet-facing database API product.
+
+### Container images and vulnerability scans
+
+- Published images (`ghcr.io/hrodrig/oci8j-connector`) are built from **Eclipse Temurin 8** (`linux/amd64`).
+- Scanners such as **Grype** will often report **High** (and sometimes Critical) CVEs in that stack. There is **no practical “High-clean” Java 8 base image** that stays clean over time while remaining compatible with `classes12.jar`.
+- The project release gate fails Grype on **Critical** by default (`GRYPE_FAIL_ON=critical`). **High findings do not block release** and must be accepted (or mitigated by you) if you run the image.
+- You are responsible for whether that risk posture is acceptable in your environment (air-gapped lab vs production, network exposure, compensating controls).
+
+### Oracle JDBC driver (`classes12.jar`)
+
+- `lib/classes12.jar` is an **Oracle proprietary** driver. It is **not** licensed under the MIT license of this repository.
+- Redistribution and use are governed by **Oracle’s terms**. Obtain and use the driver only if you are entitled to do so. The authors do not grant any Oracle rights.
+
+### SQL over HTTP
+
+- This service can execute SQL (subject to your forbidden-keyword configuration). A misconfiguration, weak auth, or overly permissive allow-list can destroy or exfiltrate data.
+- Optional Basic Auth and keyword blocks are **best-effort controls**, not a substitute for network isolation, least privilege DB accounts, WAF, audit, and operational discipline.
+- **Do not** expose this service to the public Internet without a deliberate security design you own.
+
+### No warranty
+
 **THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.**
 
 This software is provided for use at your own risk. The authors and contributors shall not be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
@@ -722,21 +779,21 @@ This software is provided for use at your own risk. The authors and contributors
 **By using this software, you acknowledge that you have read this disclaimer, understand it, and agree to be bound by its terms. You assume full responsibility for any consequences that may result from the use of this software, including but not limited to:**
 
 - Data loss or corruption
-- Security breaches
-- Infrastructure failures
-- Service interruptions
+- Security breaches, CVE exposure, and scanner findings on Java 8 / Temurin images
+- License compliance for Oracle JDBC and Oracle Database
+- Infrastructure failures and service interruptions
 - Any other damages or losses
 
 It is your responsibility to:
 
-- Test the software thoroughly in a non-production environment
-- Review and understand the code before deployment
-- Implement appropriate security measures
-- Maintain backups of your data
-- Monitor the software in production
+- Test thoroughly in a non-production environment
+- Review the code and configuration before deployment
+- Implement network, auth, and database least-privilege controls appropriate to your risk
+- Decide whether Temurin 8 / High CVE findings are acceptable for your use case
+- Maintain backups and monitoring
 
 ## License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
-**Note:** `lib/classes12.jar` is an Oracle proprietary JDBC driver and is **not** covered by this MIT license. Its use and redistribution follow Oracle’s terms.
+**Note:** `lib/classes12.jar` is an Oracle proprietary JDBC driver and is **not** covered by this MIT license. Its use and redistribution follow Oracle’s terms. See [Disclaimer](#disclaimer).

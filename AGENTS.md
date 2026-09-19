@@ -63,7 +63,7 @@ Do the **VERSION bump as a dedicated commit on `develop`** (via PR) after featur
 | `make clean` | `mvn clean` + remove `dist/` |
 | `make server` | Build image if missing; `docker compose up --build` (foreground) |
 | `make docker-build` | Local image `oci8j-connector:<VERSION>` (**linux/amd64**; runs `mvn test package` in Dockerfile) |
-| `make docker-scan` | Build + Grype (`--fail-on high`) |
+| `make docker-scan` | Build + Grype (`--fail-on critical`; High expected on Temurin 8) |
 | `make sbom` | Syft SPDX JSON under `dist/` |
 | `make release-check` | lint + test + package + docker-scan |
 | `make compose-up` / `compose-down` / `logs` / `health` | Local compose stack (`docker/docker-compose.yml`) |
