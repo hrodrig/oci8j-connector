@@ -126,7 +126,9 @@ Env vars override YAML defaults.
 
 Sensitive values must come from env / secrets managers — never commit real compose credentials.
 
-Query keyword blocking (forbidden SQL tokens) exists in application config today (`security.forbidden_keywords` / related YAML) but is **not yet** fully enumerated as a stable env-var contract here; treat as operator-facing YAML until §7 ships a frozen env surface if needed.
+Query keyword blocking: `security.forbidden_keywords` in YAML.
+
+**v1.4 YAML nesting** (see `config.example.yaml`): `edge.trusted_proxies`, `edge.allowed_cidrs`, `edge.probes_public`, `edge.probes_allowed_cidrs`, `hardening.rate_limit_max`, `hardening.rate_limit_window_seconds`, `hardening.cors_origins`, `openapi.enabled`. Env names in §7.4 still override via placeholders in packaged `config.yaml`.
 
 ---
 
@@ -214,11 +216,11 @@ Paths: existing **`/api/v1/oci8j-connector/healthz`** and **`/ready`**; add **`/
 
 | Rule | Detail |
 |------|--------|
-| Rate limit | Per resolved client IP; configurable requests/window via env (names frozen at implement). Exempt: probe routes (§7.2.1) |
-| Exceeded | **429** with minimal JSON |
-| CORS | `CORS_ORIGINS` comma list. Empty → current `*` behavior for compatibility **or** fail-closed — **decide at implement** and freeze here (prefer: empty = `*` with startup warn when Basic Auth off) |
-| Allow-list CORS | Echo matching `Origin`; omit `Access-Control-Allow-Origin` on mismatch |
-| Security headers | On all HTTP responses at least: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and a conservative `Permissions-Policy` (no camera/mic/geolocation) |
+| Rate limit | Per resolved client IP. `RATE_LIMIT_MAX` (default **0** = off), `RATE_LIMIT_WINDOW_SECONDS` (default **60**). Exempt: probe routes (§7.2.1) |
+| Exceeded | **429** with `{"code":429,"message":"Too Many Requests"}` |
+| CORS | `CORS_ORIGINS` comma list. **Empty (default) = `*`** with startup **warn** when Basic Auth is off |
+| Allow-list CORS | Echo matching `Origin` via Spring `CorsFilter`; mismatch → no allow-origin |
+| Security headers | On all HTTP responses: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()` |
 
 ### 7.4 Env vars reserved for §7 (names stable once shipped)
 
@@ -229,7 +231,8 @@ Paths: existing **`/api/v1/oci8j-connector/healthz`** and **`/ready`**; add **`/
 | `ALLOWED_CIDRS` | B | Client IP allow-list for API routes |
 | `PROBES_PUBLIC` | B | `true` (default) / `false` — skip Basic Auth on probes when true |
 | `PROBES_ALLOWED_CIDRS` | B | Optional IP allow-list for `/healthz`, `/ready`, `/readyz` only |
-| `RATE_LIMIT_*` | C | Window/max (exact suffixes frozen at implement) |
-| `CORS_ORIGINS` | C | Allowed browser origins |
+| `RATE_LIMIT_MAX` | C | Max requests per window per IP; **0** = disabled |
+| `RATE_LIMIT_WINDOW_SECONDS` | C | Window length (default **60**) |
+| `CORS_ORIGINS` | C | Allowed browser origins CSV; empty = `*` |
 
-Until §7 ships, operators must assume: **no** Swagger, **no** IP allow-list, **no** trusted XFF, CORS `*`, no rate limit, no security headers; probes are **always public** (v1.3.1 behavior).
+Until §7 fully ships (OpenAPI still pending), operators must assume: **no** Swagger by default; edge/probe/hardening keys above apply when present in env/`config.yaml`.
