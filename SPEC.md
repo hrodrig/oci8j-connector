@@ -33,18 +33,20 @@ Base path: **`/api/v1/oci8j-connector`**
 | `/query` | `POST` | Basic Auth if enabled | Execute SQL; JSON body |
 | `/healthz` | `GET` | Public by default† | Liveness; **200** even if DB down |
 | `/ready` | `GET` | Public by default† | Readiness; **200** only if DB connected |
-| `/readyz` | `GET` | Public by default† | **Target §7:** alias of `/ready` (k8s-style name) — **not** shipped in v1.3.1 |
+| `/readyz` | `GET` | Public by default† | Alias of `/ready` (k8s-style) |
 | `/info` | `GET` | Basic Auth if enabled | App/build/git/auth/**endpoints** discovery |
+| `/v3/api-docs` | `GET` | Same as `/info` when docs on | OpenAPI JSON (gated; §7.1) |
+| `/swagger-ui.html` | `GET` | Same as `/info` when docs on | Swagger UI (gated; §7.1) |
 
-† **v1.3.1 (current):** probes are always public (Basic Auth skipped). **v1.4 §7.2.1:** probes stay public by default but operators may require Basic Auth and/or a probe IP allow-list.
+† Probes default public (`edge.probes_public` / `PROBES_PUBLIC=true`). May require Basic Auth and/or `edge.probes_allowed_cidrs`.
 
 Unknown paths return the same minimal JSON 404 (no Whitelabel HTML).
 
-CORS: controller allows `origins = "*"` (**current** behavior; see §7 for planned allow-list).
+CORS: `hardening.cors_origins` / `CORS_ORIGINS` (empty = `*`). See §7.3.
 
-When Basic Auth is enabled (v1.3.1), **`/`**, **`/healthz`**, and **`/ready`** remain accessible without credentials. Other routes under the API base path require valid credentials.
+When Basic Auth is enabled, **`/`** stays public; probes follow `PROBES_PUBLIC`; other API and OpenAPI routes require credentials.
 
-**Not in v1.3.1:** OpenAPI/Swagger UI, IP/CIDR allow-list, trusted-proxy / `X-Forwarded-*` client identity, rate limit, security headers, configurable probe access, `/readyz`. Target contract: **§7**.
+§7 A/B/C implemented on the **v1.4.0** line (this branch); released **v1.3.1** did not ship these gates.
 
 ---
 
@@ -164,7 +166,7 @@ Example manifest: `kubernetes/k8s-deployment.yaml`.
 
 ## 7. Target: OpenAPI, edge identity, and hardening (A/B/C)
 
-> **Status:** **Not implemented** in **v1.3.1**. This section is the **normative target** for the next minor (planned **v1.4.x**). Env names and rules below are reserved; shipping them is additive (SemVer minor). Implementation should follow a GSD milestone / phase plan (see **AGENTS.md**), not ad-hoc commits on `main`.
+> **Status:** Implemented on the **v1.4.0** line (unreleased until VERSION bump). Normative for operators once **1.4.0** is tagged. Env/YAML names below are frozen.
 
 Scope locked by operator decision **A + B + C**:
 
@@ -236,4 +238,4 @@ Paths: existing **`/api/v1/oci8j-connector/healthz`** and **`/ready`**; add **`/
 | `RATE_LIMIT_WINDOW_SECONDS` | C | Window length (default **60**) |
 | `CORS_ORIGINS` | C | Allowed browser origins CSV; empty = `*` |
 
-Until §7 fully ships (OpenAPI still pending), operators must assume: **no** Swagger by default; edge/probe/hardening keys above apply when present in env/`config.yaml`.
+Until **1.4.0** is tagged, released binaries remain **v1.3.1** behavior for operators who have not upgraded.

@@ -36,7 +36,7 @@ So the gap is: **legacy Oracle 8i on one side, modern HTTP clients on the other*
 |----------|---------|
 | Talk to Oracle 8i from anywhere that can `curl` | `POST /api/v1/oci8j-connector/query` → JSON |
 | One place that owns the old JDBC stack | Single container / JAR; clients stay modern |
-| Ops-friendly deploy | Docker / Compose / Kubernetes probes (`/healthz`, `/ready`) |
+| Ops-friendly deploy | Docker / Compose / Kubernetes probes (`/healthz`, `/ready` or `/readyz`) |
 | Guardrails | Optional Basic Auth + forbidden SQL keywords |
 
 Published image: `ghcr.io/hrodrig/oci8j-connector` (**linux/amd64**). Day-to-day: **`make`** (family workflow) or plain `mvn`.
@@ -136,7 +136,29 @@ export BASIC_AUTH_USERNAME=admin
 export BASIC_AUTH_PASSWORD=secretpassword
 ```
 
-**Note:** If Basic Auth is enabled, all API endpoints will require authentication. The `/healthz` endpoint remains accessible without authentication for monitoring purposes.
+**Note:** If Basic Auth is enabled, API routes (`/query`, `/info`, OpenAPI when on) require credentials. Probes (`/healthz`, `/ready`, `/readyz`) stay public by default (`edge.probes_public: true` / `PROBES_PUBLIC=true`).
+
+### Edge, probes, hardening, OpenAPI (v1.4)
+
+Nested YAML in `config.example.yaml` (env overrides in parentheses):
+
+```yaml
+edge:
+  trusted_proxies: ""          # TRUSTED_PROXIES
+  allowed_cidrs: ""            # ALLOWED_CIDRS
+  probes_public: true          # PROBES_PUBLIC
+  probes_allowed_cidrs: ""     # PROBES_ALLOWED_CIDRS
+
+hardening:
+  rate_limit_max: 0            # RATE_LIMIT_MAX (0 = off)
+  rate_limit_window_seconds: 60
+  cors_origins: ""             # CORS_ORIGINS (empty = *)
+
+openapi:
+  enabled: false               # OPENAPI_ENABLED; also on for profile dev/local
+```
+
+OpenAPI paths when enabled: `/v3/api-docs`, `/swagger-ui.html`. Full contract: [SPEC.md](SPEC.md) §7.
 
 ## Quick Start with Make
 
@@ -307,6 +329,8 @@ Executes a SQL query and returns the results in JSON format.
 
 **Readiness Probe** - Verifies the application is ready to serve traffic (includes database connectivity).
 
+Alias: **`GET /api/v1/oci8j-connector/readyz`** (same response).
+
 **Response:**
 
 ```json
@@ -317,7 +341,7 @@ Executes a SQL query and returns the results in JSON format.
 }
 ```
 
-**Note:** For Kubernetes deployments, use `/healthz` for liveness probes and `/ready` for readiness probes.
+**Note:** Kubernetes: `/healthz` for liveness; `/ready` or `/readyz` for readiness.
 
 ### GET /api/v1/oci8j-connector/info
 

@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - Edge identity (phase 1): `TRUSTED_PROXIES` + resolved client IP; `ALLOWED_CIDRS` API allow-list with **403** JSON; probes exempt.
 - Probe access (phase 2): `/readyz`; `PROBES_PUBLIC` (default true); `PROBES_ALLOWED_CIDRS` independent of API list.
 - Hardening (phase 3): `RATE_LIMIT_MAX` / window, `CORS_ORIGINS` via CorsFilter, baseline security headers.
+- OpenAPI (phase 4): springdoc-openapi-ui 1.7 gated (`openapi.enabled` / `dev`|`local`); paths `/v3/api-docs`, `/swagger-ui.html`.
 
 ## [1.3.1] - 2026-09-19
 

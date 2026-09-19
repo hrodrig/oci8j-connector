@@ -8,11 +8,11 @@
 
 ### OpenAPI (A)
 
-- [ ] **OAPI-01**: springdoc-openapi runs on Spring Boot 2.7 / Java 8
-- [ ] **OAPI-02**: OpenAPI off by default when profile contains `prod` or when not explicitly enabled
-- [ ] **OAPI-03**: `OPENAPI_ENABLED=true` or profile `dev`/`local` enables docs + UI; paths frozen in SPEC
-- [ ] **OAPI-04**: When Basic Auth enabled, OpenAPI paths require same credentials as `/info`
-- [ ] **OAPI-05**: If OpenAPI on and Basic Auth off → startup warn; prod compose/examples keep OpenAPI off
+- [x] **OAPI-01**: springdoc-openapi runs on Spring Boot 2.7 / Java 8
+- [x] **OAPI-02**: OpenAPI off by default when profile contains `prod` or when not explicitly enabled
+- [x] **OAPI-03**: `OPENAPI_ENABLED=true` or profile `dev`/`local` enables docs + UI; paths frozen in SPEC
+- [x] **OAPI-04**: When Basic Auth enabled, OpenAPI paths require same credentials as `/info`
+- [x] **OAPI-05**: If OpenAPI on and Basic Auth off → startup warn; prod compose/examples keep OpenAPI off
 
 ### Edge identity & allow-lists (B)
 
@@ -38,9 +38,9 @@
 
 ### Docs & release hygiene
 
-- [ ] **DOCS-01**: SPEC §4/§7 env table matches shipped names; README + compose examples updated
+- [x] **DOCS-01**: SPEC §4/§7 env table matches shipped names; README + compose examples updated
 - [ ] **DOCS-02**: CHANGELOG Unreleased → 1.4.0; VERSION/pom/Dockerfile/README badges synced on bump PR
-- [ ] **TEST-01**: Automated tests for 403/429, probe defaults, trusted-proxy spoof rejection
+- [x] **TEST-01**: Automated tests for 403/429, probe defaults, trusted-proxy spoof rejection
 
 ## Deferred (post-1.4.0)
 
@@ -63,7 +63,7 @@
 | EDGE-01..05 | 1 | Done |
 | PROB-01..05 | 2 | Done |
 | HARD-01..03 | 3 | Done |
-| OAPI-01..05 | 4 | Pending |
+| OAPI-01..05 | 4 | Done |
 | DOCS-01..02, TEST-01 | 5 | Pending |
 
 **Coverage:** 20 v1.4 reqs mapped; 0 unmapped.
