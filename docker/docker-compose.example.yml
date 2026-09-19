@@ -1,10 +1,14 @@
 # Default: pull published image from GHCR (linux/amd64).
-# Local build: make docker-build && OCI8J_IMAGE=oci8j-connector:1.4.0 docker compose ...
 # Override tag: OCI8J_IMAGE=ghcr.io/hrodrig/oci8j-connector:v1.4.0
+# Local Dockerfile build: uncomment `build:` below and comment out `image:` (or set both:
+#   image tags the build result — then `docker compose up --build`).
 
 services:
   oci8j-connector:
     image: ${OCI8J_IMAGE:-ghcr.io/hrodrig/oci8j-connector:v1.4.0}
+    # build:
+    #   context: ..
+    #   dockerfile: docker/Dockerfile
     ports:
       - "8080:8080"
     environment:

@@ -7,7 +7,7 @@ App stays **HTTP on 8080** inside the compose network. TLS terminates at the rev
 - Connector image does not embed TLS (keeps Java 8 / ops surface small).
 - `TRUSTED_PROXIES` must include the proxy peer CIDR so `X-Forwarded-For` / `X-Real-IP` are honored (SPEC §7.2).
 - Never publish connector `:8080` to the host when using these stacks (proxy only).
-- Connector image defaults to **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** (`OCI8J_IMAGE` to override; local: `make docker-build` then `OCI8J_IMAGE=oci8j-connector:1.4.0`).
+- Connector image defaults to **`ghcr.io/hrodrig/oci8j-connector:v1.4.0`** (`OCI8J_IMAGE` to override). For a local Dockerfile build, uncomment the `build:` block in the compose file (and use `docker compose up --build`).
 
 Default internal network: **`172.28.10.0/24`** → set `TRUSTED_PROXIES=172.28.10.0/24`.
 
