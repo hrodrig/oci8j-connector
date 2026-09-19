@@ -17,5 +17,4 @@ basic_auth:
   username: ${BASIC_AUTH_USERNAME:}
   password: ${BASIC_AUTH_PASSWORD:}
 
-# Edge identity (SPEC §7.2) — env: TRUSTED_PROXIES / ALLOWED_CIDRS
-# Probe access (SPEC §7.2.1) — env: PROBES_PUBLIC (default true) / PROBES_ALLOWED_CIDRS
+# Edge / probes / hardening — see edge.* and hardening.* in config.yaml (SPEC §7)

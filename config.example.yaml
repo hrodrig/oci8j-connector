@@ -1,6 +1,6 @@
 # Oracle 8i Connector - Configuration Example
 # Copy this file to config.yaml and update with your actual values.
-# Prefer secrets via env vars in Docker/K8s (see comments) — never commit real credentials.
+# Prefer secrets via env vars in Docker/K8s — never commit real credentials.
 
 server:
   port: 8080
@@ -10,8 +10,7 @@ server:
 spring:
   application:
     name: oracle8i-connector
-  
-  # Logging configuration
+
   logging:
     level:
       com.connectors.oracle8i: DEBUG
@@ -19,20 +18,18 @@ spring:
     pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
-# Oracle 8i configuration
+# Oracle 8i (env: ORACLE_HOST, ORACLE_PORT, ORACLE_SID, ORACLE_USERNAME, ORACLE_PASSWORD)
 oracle8i:
-  host: 1.2.3.4                    # Replace with your Oracle server IP (or ORACLE_HOST)
-  port: 1521                       # Replace with your Oracle port (or ORACLE_PORT)
-  sid: orcl                        # Replace with your Oracle SID (or ORACLE_SID)
-  username: username               # Replace with your Oracle username (or ORACLE_USERNAME)
-  password: password               # Replace with your Oracle password (or ORACLE_PASSWORD)
+  host: 1.2.3.4
+  port: 1521
+  sid: orcl
+  username: username
+  password: password
   driver: oracle.jdbc.driver.OracleDriver
-  # Connection timeouts (in milliseconds)
-  connection_timeout: 30000        # Connection timeout (30 seconds)
-  socket_timeout: 60000            # Socket timeout (60 seconds)
-  query_timeout: 120000            # Query execution timeout (120 seconds)
+  connection_timeout: 30000
+  socket_timeout: 60000
+  query_timeout: 120000
 
-# NLS configuration for Oracle 8i
 oracle:
   jdbc:
     timezoneAsRegion: false
@@ -42,41 +39,44 @@ oracle:
         TCP_CONNTIMEOUT: 10000
         TCP_RECVTIMEOUT: 10000
 
-# Application configuration
 app:
   name: Oracle 8i Connector
   version: 1.0.0                   # Display-only; runtime /info uses build VERSION
   description: Oracle 8i connector using classes12.jar
 
-# Basic Authentication (optional)
-# Only enabled if both username and password are provided
-# Env: BASIC_AUTH_ENABLED / BASIC_AUTH_USERNAME / BASIC_AUTH_PASSWORD
+# Basic Auth (env: BASIC_AUTH_ENABLED, BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD)
 basic_auth:
-  enabled: false                       # Set to true to enable Basic Auth
-  username: admin                      # Replace with your desired username
-  password: secretpassword             # Replace with your desired password
+  enabled: false
+  username: admin
+  password: secretpassword
 
-# Query keyword blocking (optional)
+# SQL keyword blocking
 security:
-  # Empty = no keyword block. Example: [DROP, TRUNCATE, DELETE]
+  # Example: [DROP, TRUNCATE, DELETE]
   forbidden_keywords: []
 
-# --- SPEC §7 edge / probes / hardening (v1.4) ---
-# Keys match env names used by the app (@Value). Empty = feature off / defaults.
-# Prefer setting them as environment variables in compose/K8s.
+# --- SPEC §7 edge / probes (v1.4) ---
+# Env overrides: TRUSTED_PROXIES, ALLOWED_CIDRS, PROBES_PUBLIC, PROBES_ALLOWED_CIDRS
+edge:
+  # Peer CIDRs trusted for X-Forwarded-For / X-Real-IP (empty = ignore forwarded headers)
+  trusted_proxies: ""
+  # API allow-list for /query, /info, etc. (empty = no IP filter)
+  allowed_cidrs: ""
+  # Probes /healthz /ready /readyz — skip Basic Auth when true (default)
+  probes_public: true
+  # Probe-only IP allow-list (empty = no probe IP filter; independent of allowed_cidrs)
+  probes_allowed_cidrs: ""
 
-# Peer CIDRs trusted for X-Forwarded-For / X-Real-IP (empty = ignore forwarded headers)
-TRUSTED_PROXIES: ""
-# API allow-list for /query, /info, etc. (empty = no IP filter). Probes use PROBES_ALLOWED_CIDRS.
-ALLOWED_CIDRS: ""
-# Probes /healthz /ready /readyz: public by default (skip Basic Auth when true)
-PROBES_PUBLIC: true
-# Optional IP allow-list for probes only (empty = no probe IP filter)
-PROBES_ALLOWED_CIDRS: ""
-# Rate limit per resolved client IP (0 = disabled). Probes exempt.
-RATE_LIMIT_MAX: 0
-RATE_LIMIT_WINDOW_SECONDS: 60
-# CORS origins CSV. Empty = * (startup warn if Basic Auth off)
-CORS_ORIGINS: ""
-# OpenAPI / Swagger (phase 4) — reserved; keep false in production examples
-OPENAPI_ENABLED: false
+# --- SPEC §7 hardening (v1.4) ---
+# Env overrides: RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SECONDS, CORS_ORIGINS
+hardening:
+  # Max requests per window per client IP (0 = disabled). Probes exempt.
+  rate_limit_max: 0
+  rate_limit_window_seconds: 60
+  # CORS origins CSV. Empty = * (startup warn if Basic Auth off)
+  cors_origins: ""
+
+# OpenAPI / Swagger (phase 4) — keep false in production
+# Env: OPENAPI_ENABLED
+openapi:
+  enabled: false

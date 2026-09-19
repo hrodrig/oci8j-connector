@@ -5,21 +5,22 @@ import org.springframework.stereotype.Component;
 
 /**
  * Edge identity + probe access (SPEC §7.2 / §7.2.1).
+ * YAML: edge.*; env: TRUSTED_PROXIES / ALLOWED_CIDRS / PROBES_* (via config.yaml placeholders).
  */
 @Component
 public class EdgeAccessConfig {
 
-    @Value("${TRUSTED_PROXIES:}")
+    @Value("${edge.trusted_proxies:${TRUSTED_PROXIES:}}")
     private String trustedProxies;
 
-    @Value("${ALLOWED_CIDRS:}")
+    @Value("${edge.allowed_cidrs:${ALLOWED_CIDRS:}}")
     private String allowedCidrs;
 
     /** Default true — probes skip Basic Auth. */
-    @Value("${PROBES_PUBLIC:true}")
+    @Value("${edge.probes_public:${PROBES_PUBLIC:true}}")
     private boolean probesPublic;
 
-    @Value("${PROBES_ALLOWED_CIDRS:}")
+    @Value("${edge.probes_allowed_cidrs:${PROBES_ALLOWED_CIDRS:}}")
     private String probesAllowedCidrs;
 
     public String getTrustedProxies() {

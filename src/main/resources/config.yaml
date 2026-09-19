@@ -52,15 +52,19 @@ basic_auth:
 # Security configuration
 security:
   # List of forbidden keywords in SQL queries (empty by default)
-  # Configure according to your security requirements
   forbidden_keywords: []
 
-# SPEC §7 (v1.4) — also overridable via env with the same names
-TRUSTED_PROXIES: ${TRUSTED_PROXIES:}
-ALLOWED_CIDRS: ${ALLOWED_CIDRS:}
-PROBES_PUBLIC: ${PROBES_PUBLIC:true}
-PROBES_ALLOWED_CIDRS: ${PROBES_ALLOWED_CIDRS:}
-RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:0}
-RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS:60}
-CORS_ORIGINS: ${CORS_ORIGINS:}
-OPENAPI_ENABLED: ${OPENAPI_ENABLED:false}
+# SPEC §7 (v1.4) — nested YAML; env names in comments override via ${...}
+edge:
+  trusted_proxies: ${TRUSTED_PROXIES:}
+  allowed_cidrs: ${ALLOWED_CIDRS:}
+  probes_public: ${PROBES_PUBLIC:true}
+  probes_allowed_cidrs: ${PROBES_ALLOWED_CIDRS:}
+
+hardening:
+  rate_limit_max: ${RATE_LIMIT_MAX:0}
+  rate_limit_window_seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}
+  cors_origins: ${CORS_ORIGINS:}
+
+openapi:
+  enabled: ${OPENAPI_ENABLED:false}
