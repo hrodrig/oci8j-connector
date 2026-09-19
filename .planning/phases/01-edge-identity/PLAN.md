@@ -6,14 +6,18 @@
 
 ## Success criteria
 
-- [ ] Empty `TRUSTED_PROXIES` → ignore XFF / X-Real-IP (spoof rejected)
-- [ ] Peer in `TRUSTED_PROXIES` → resolve client from XFF (strip trusted) or X-Real-IP
-- [ ] Empty `ALLOWED_CIDRS` → no API IP filter
-- [ ] Non-empty → API routes outside list get `{"code":403,"message":"Forbidden"}`
-- [ ] Probes (`/healthz`, `/ready`) exempt from API allow-list
-- [ ] `GET /` unaffected (filter not on `/`)
-- [ ] Unit tests cover matcher + resolver + filter deny/allow
-- [ ] `make test` green
+- [x] Empty `TRUSTED_PROXIES` → ignore XFF / X-Real-IP (spoof rejected)
+- [x] Peer in `TRUSTED_PROXIES` → resolve client from XFF (strip trusted) or X-Real-IP
+- [x] Empty `ALLOWED_CIDRS` → no API IP filter
+- [x] Non-empty → API routes outside list get `{"code":403,"message":"Forbidden"}`
+- [x] Probes (`/healthz`, `/ready`) exempt from API allow-list
+- [x] `GET /` unaffected (filter not on `/`)
+- [x] Unit tests cover matcher + resolver + filter deny/allow
+- [x] `make test` green (13 tests)
+
+## Status
+
+**Complete** 2026-09-19 — commits `ffa5290`, `64f559c`.
 
 ## Tasks
 

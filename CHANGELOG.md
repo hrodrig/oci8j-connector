@@ -13,6 +13,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - SPEC §7: target contract **A/B/C** (OpenAPI gate, trusted proxies + IP allow-list, rate limit / CORS / security headers) for **v1.4.x**; GSD milestone for implementation. Fix `/ready` auth note to match public filter behavior.
 - SPEC §7.2.1: probes `/healthz`, `/ready`, `/readyz` — public by default; `PROBES_PUBLIC` + optional `PROBES_ALLOWED_CIDRS` (separate from API `ALLOWED_CIDRS`).
 
+### Added
+
+- Edge identity (phase 1): `TRUSTED_PROXIES` + resolved client IP; `ALLOWED_CIDRS` API allow-list with **403** JSON; probes exempt.
+
 ## [1.3.1] - 2026-09-19
 
 ### Fixed

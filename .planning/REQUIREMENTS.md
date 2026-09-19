@@ -16,11 +16,11 @@
 
 ### Edge identity & allow-lists (B)
 
-- [ ] **EDGE-01**: Resolve client IP from peer `RemoteAddr`; honor XFF/X-Real-IP only if peer ∈ `TRUSTED_PROXIES`
-- [ ] **EDGE-02**: Empty `TRUSTED_PROXIES` (default) ignores all forwarded client headers
-- [ ] **EDGE-03**: `ALLOWED_CIDRS` gates API routes (`/query`, `/info`, OpenAPI when on); empty = no API IP filter
-- [ ] **EDGE-04**: Outside allow-list → **403** minimal JSON
-- [ ] **EDGE-05**: `GET /` public 404 remains outside API allow-list
+- [x] **EDGE-01**: Resolve client IP from peer `RemoteAddr`; honor XFF/X-Real-IP only if peer ∈ `TRUSTED_PROXIES`
+- [x] **EDGE-02**: Empty `TRUSTED_PROXIES` (default) ignores all forwarded client headers
+- [x] **EDGE-03**: `ALLOWED_CIDRS` gates API routes (`/query`, `/info`, OpenAPI when on); empty = no API IP filter
+- [x] **EDGE-04**: Outside allow-list → **403** minimal JSON
+- [x] **EDGE-05**: `GET /` public 404 remains outside API allow-list
 
 ### Probes (B)
 
@@ -60,7 +60,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EDGE-01..05 | 1 | Pending |
+| EDGE-01..05 | 1 | Done |
 | PROB-01..05 | 2 | Pending |
 | HARD-01..03 | 3 | Pending |
 | OAPI-01..05 | 4 | Pending |
