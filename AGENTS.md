@@ -6,6 +6,7 @@
 - Do **not** commit secrets: real `docker/docker-compose.yml`, credential-filled configs, `.env`. Use `*.example` / env vars only.
 - Shared agent policy lives in tracked files (`AGENTS.md`, `SPEC.md`, `README.md`, `CONTRIBUTING.md`, `Makefile`). Do not rely on untracked local agent config as source of truth.
 - Prefer **`make`** for all quality gates and Docker ops (`make help`). Windows: Git Bash / WSL Make, or plain `mvn` + Docker CLI.
+- **SPEC §7** (OpenAPI, trusted proxies / IP allow-list, rate limit / CORS / headers) is the locked **target** for **v1.4.x** — **not** implemented in v1.3.1. Implement via a **GSD milestone** (discuss → plan → execute → verify), not drive-by commits on `main`.
 
 ## Git flow
 
