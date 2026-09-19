@@ -48,6 +48,10 @@
 !docs/
 !docs/**
 
+# GSD planning artifacts (tracked milestone/roadmap state)
+!.planning/
+!.planning/**
+
 # Include scripts
 !scripts/
 
