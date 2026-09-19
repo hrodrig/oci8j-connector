@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Edge identity (phase 1): `TRUSTED_PROXIES` + resolved client IP; `ALLOWED_CIDRS` API allow-list with **403** JSON; probes exempt.
+- Probe access (phase 2): `/readyz`; `PROBES_PUBLIC` (default true); `PROBES_ALLOWED_CIDRS` independent of API list.
 
 ## [1.3.1] - 2026-09-19
 

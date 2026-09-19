@@ -24,11 +24,11 @@
 
 ### Probes (B)
 
-- [ ] **PROB-01**: `/readyz` alias identical to `/ready`
-- [ ] **PROB-02**: Default `PROBES_PUBLIC=true` — no Basic Auth; not gated by `ALLOWED_CIDRS`
-- [ ] **PROB-03**: `PROBES_PUBLIC=false` + Basic Auth on → probes require Basic Auth
-- [ ] **PROB-04**: Non-empty `PROBES_ALLOWED_CIDRS` → only those IPs; else **403**; independent of `ALLOWED_CIDRS`
-- [ ] **PROB-05**: Probes exempt from rate limit
+- [x] **PROB-01**: `/readyz` alias identical to `/ready`
+- [x] **PROB-02**: Default `PROBES_PUBLIC=true` — no Basic Auth; not gated by `ALLOWED_CIDRS`
+- [x] **PROB-03**: `PROBES_PUBLIC=false` + Basic Auth on → probes require Basic Auth
+- [x] **PROB-04**: Non-empty `PROBES_ALLOWED_CIDRS` → only those IPs; else **403**; independent of `ALLOWED_CIDRS`
+- [x] **PROB-05**: Probes exempt from rate limit
 
 ### Hardening (C)
 
@@ -61,7 +61,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | EDGE-01..05 | 1 | Done |
-| PROB-01..05 | 2 | Pending |
+| PROB-01..05 | 2 | Done |
 | HARD-01..03 | 3 | Pending |
 | OAPI-01..05 | 4 | Pending |
 | DOCS-01..02, TEST-01 | 5 | Pending |
