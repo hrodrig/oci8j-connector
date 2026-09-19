@@ -4,33 +4,30 @@ milestone_name: OpenAPI and edge hardening
 status: executing
 progress:
   phases_total: 5
-  phases_done: 0
-  percent: 0
-last_activity: 2026-09-19 — Phase 1 executing; PR after local gates
+  phases_done: 1
+  percent: 20
+last_activity: 2026-09-19 — Phase 1 done (13 tests); next phase 2 probes
 ---
 
 # STATE
 
 ## Current Position
 
-Phase: 1 — Edge identity (executing)
-Plan: `.planning/phases/01-edge-identity/PLAN.md`
-Status: Executing phase 1
-Last activity: 2026-09-19 — Roadmap OK; PR deferred until local gates green
+Phase: 2 — Probe access (next)
+Plan: Phase 1 complete; phase 2 not planned yet
+Status: Phase 1 done
+Last activity: 2026-09-19 — EDGE-* shipped; `make test` 13/13
 
 ## Process
 
-- **Commits:** frecuentes y atómicos (1 cambio lógico / task por commit).
-- **PR:** solo al **final** del milestone, **después** de validar en local que pasen las pruebas (`make test`, `make lint`; `make release-check` antes de ship).
-- **Ship:** VERSION bump + tag solo con OK explícito.
-- **Branch:** `feat/v1.4.0-hardening` → PR → `develop`.
+- **Commits:** frecuentes y atómicos.
+- **PR:** solo al **final**, tras validar local (`make test`, `make lint`; `release-check` antes de ship).
+- **Branch:** `feat/v1.4.0-hardening`.
 
 ## Accumulated Context
 
-- SPEC §7 A+B+C locked; probes `PROBES_PUBLIC` + `PROBES_ALLOWED_CIDRS`; `/readyz` alias.
-- Baseline shipped: v1.3.1.
-- Research skipped for milestone start: contract already normative in SPEC.
-- Roadmap confirmed 2026-09-19.
+- Phase 1: `CidrMatcher`, `ClientIpResolver`, `IpAllowListFilter`, `TRUSTED_PROXIES` / `ALLOWED_CIDRS`.
+- Roadmap confirmed; PR deferred until local gates green.
 
 ## Blockers
 
@@ -38,7 +35,7 @@ Last activity: 2026-09-19 — Roadmap OK; PR deferred until local gates green
 
 ## Todos
 
-- [x] Approve ROADMAP phases
-- [ ] Complete phase 1 (EDGE-*)
-- [ ] Phases 2–5
-- [ ] Local `make test` (+ lint) green before PR
+- [x] Phase 1 EDGE-*
+- [ ] Phase 2 PROB-*
+- [ ] Phases 3–5
+- [ ] Local gates green before PR
